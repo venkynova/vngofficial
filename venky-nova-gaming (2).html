@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VNG — Venky Nova Generation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --c:0,245,255;--p:191,0,255;--r:255,0,60;--g:255,215,0;
+  --cyan:rgb(var(--c));--purple:rgb(var(--p));--red:rgb(var(--r));--gold:rgb(var(--g));
+  --bg:#030508;--card:#070c12;--mid:#0b1119;--border:rgba(0,245,255,0.08);
+  --t1:#e8f4ff;--t2:#7a9bb8;--t3:#3a5268;
+  --nav-h:70px;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--t1);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;}
+img{max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:none;}
+
+/* CURSOR */
+#cur,#curdot{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%);}
+#cur{width:22px;height:22px;border:1.5px solid var(--cyan);transition:width .2s,height .2s,border-color .2s;}
+#curdot{width:4px;height:4px;background:var(--cyan);}
+
+/* BG LAYERS */
+#pcanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,245,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);pointer-events:none;z-index:998;}
+
+/* ═══ NAV ═══ */
+nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 50px;z-index:1000;
+  transition:background .3s,border .3s;
+}
+nav.scrolled{background:rgba(3,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 20px rgba(var(--c),.5);}
+.logo span{color:var(--purple);}
+.logo sub{font-size:9px;letter-spacing:2px;color:var(--t2);vertical-align:sub;margin-left:4px;font-family:'Share Tech Mono',monospace;}
+.nav-links{display:flex;gap:6px;list-style:none;}
+.nav-links a{
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;
+  color:var(--t2);padding:8px 14px;border:1px solid transparent;
+  transition:all .25s;position:relative;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);border-color:rgba(var(--c),.2);background:rgba(var(--c),.04);}
+.nav-links a .nav-icon{margin-right:4px;font-size:11px;}
+.nav-cta{
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;
+  padding:8px 20px;background:transparent;border:1px solid var(--cyan);
+  color:var(--cyan);transition:all .3s;cursor:none;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.nav-cta:hover{background:var(--cyan);color:var(--bg);box-shadow:0 0 25px rgba(var(--c),.4);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:none;padding:5px;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--cyan);}
+
+/* ═══ SECTIONS COMMON ═══ */
+section{position:relative;z-index:1;padding:100px 60px;}
+.sec-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--purple);margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.sec-eyebrow::before{content:'';width:24px;height:1px;background:var(--purple);}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:clamp(28px,4vw,52px);font-weight:900;letter-spacing:-1px;line-height:1.05;margin-bottom:16px;}
+.sec-sub{font-size:16px;color:var(--t2);line-height:1.6;letter-spacing:.4px;max-width:600px;}
+
+/* Divider */
+.sec-divider{width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(var(--c),.15),transparent);margin:0;}
+
+/* Chips / tags */
+.chip{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:4px 10px;border:1px solid;margin:3px;}
+
+/* Buttons */
+.btn-p{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;padding:12px 28px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:var(--bg);border:none;cursor:none;font-weight:700;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(var(--c),.4);}
+.btn-s{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;padding:12px 28px;background:transparent;color:var(--t1);border:1px solid rgba(255,255,255,.15);cursor:none;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);}
+.btn-s:hover{border-color:var(--purple);color:var(--purple);}
+
+/* Reveal animations */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .75s cubic-bezier(.25,.46,.45,.94),transform .75s cubic-bezier(.25,.46,.45,.94);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal.d1{transition-delay:.1s;}.reveal.d2{transition-delay:.2s;}.reveal.d3{transition-delay:.3s;}.reveal.d4{transition-delay:.4s;}.reveal.d5{transition-delay:.5s;}
+
+/* ═══════════════════════════════════
+   1. HOME
+═══════════════════════════════════ */
+#home{height:100vh;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.home-orb{position:absolute;border-radius:50%;filter:blur(90px);animation:orb-pulse 5s ease-in-out infinite;}
+.orb-a{width:450px;height:450px;background:rgba(var(--c),.09);top:5%;left:-8%;animation-delay:0s;}
+.orb-b{width:350px;height:350px;background:rgba(var(--p),.09);top:15%;right:-5%;animation-delay:2s;}
+.orb-c{width:250px;height:250px;background:rgba(var(--r),.06);bottom:15%;left:45%;animation-delay:4s;}
+
+.vng-logo-main{
+  font-family:'Orbitron',sans-serif;font-size:clamp(90px,18vw,200px);font-weight:900;
+  line-height:.85;letter-spacing:-5px;text-align:center;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 60%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 60px rgba(var(--c),.25));
+  animation:vng-glow 4s ease-in-out infinite alternate;
+  position:relative;
+}
+.home-tagline{font-family:'Rajdhani',sans-serif;font-size:clamp(14px,2vw,20px);font-weight:300;letter-spacing:6px;color:var(--t2);text-align:center;margin-top:20px;}
+.home-tagline strong{color:var(--cyan);font-weight:600;}
+.home-tagline span{color:var(--purple);}
+
+/* Hex decoration */
+.hex-deco{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:hex-spin 30s linear infinite;}
+
+/* Home bottom bar */
+.home-bottom{position:absolute;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);}
+.hb-item{padding:20px 30px;border-right:1px solid var(--border);text-align:center;}
+.hb-item:last-child{border-right:none;}
+.hb-num{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(var(--c),.4);}
+.hb-label{font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:4px;}
+
+/* Quick Nav Grid */
+#qnav{background:var(--card);padding:70px 60px;}
+.qnav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:40px;}
+.qnav-card{
+  background:var(--bg);border:1px solid var(--border);
+  padding:32px 28px;transition:all .35s;cursor:none;
+  position:relative;overflow:hidden;
+}
+.qnav-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));opacity:0;transition:opacity .3s;}
+.qnav-card:hover{border-color:rgba(var(--c),.25);transform:translateY(-3px);}
+.qnav-card:hover::after{opacity:1;}
+.qnav-icon{font-size:32px;margin-bottom:14px;display:block;}
+.qnav-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.qnav-desc{font-size:13px;color:var(--t2);line-height:1.5;letter-spacing:.3px;}
+.qnav-arrow{position:absolute;top:24px;right:24px;color:var(--t3);font-size:20px;transition:all .3s;}
+.qnav-card:hover .qnav-arrow{color:var(--cyan);transform:translateX(4px);}
+
+/* ═══════════════════════════════════
+   2. UPDATES
+═══════════════════════════════════ */
+#updates{background:var(--bg);}
+.updates-layout{display:grid;grid-template-columns:1fr 320px;gap:40px;margin-top:50px;}
+.changelog{display:flex;flex-direction:column;gap:0;}
+
+.cl-entry{
+  border-left:1px solid var(--border);padding:0 0 40px 30px;position:relative;
+  transition:border-color .3s;
+}
+.cl-entry:hover{border-color:rgba(var(--c),.3);}
+.cl-entry:last-child{border-left:1px solid transparent;padding-bottom:0;}
+.cl-dot{
+  position:absolute;left:-7px;top:4px;
+  width:13px;height:13px;border-radius:50%;border:2px solid var(--bg);
+}
+.cl-date{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--t3);margin-bottom:10px;}
+.cl-badge{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  padding:3px 9px;border:1px solid;display:inline-block;margin-bottom:12px;
+}
+.badge-site{color:var(--cyan);border-color:rgba(var(--c),.3);background:rgba(var(--c),.06);}
+.badge-yt{color:var(--red);border-color:rgba(var(--r),.3);background:rgba(var(--r),.06);}
+.badge-proj{color:var(--purple);border-color:rgba(var(--p),.3);background:rgba(var(--p),.06);}
+.badge-ann{color:var(--gold);border-color:rgba(var(--g),.3);background:rgba(var(--g),.06);}
+.badge-fix{color:#00ff88;border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.06);}
+
+.cl-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;margin-bottom:8px;}
+.cl-body{font-size:14px;color:var(--t2);line-height:1.65;letter-spacing:.3px;}
+.cl-tags{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;}
+.cl-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--t3);}
+
+/* Sidebar */
+.updates-sidebar{display:flex;flex-direction:column;gap:16px;}
+.sidebar-card{background:var(--card);border:1px solid var(--border);padding:24px;}
+.sidebar-title{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--cyan);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.sidebar-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);}
+.sidebar-row:last-child{border-bottom:none;}
+.sidebar-label{font-size:13px;color:var(--t2);}
+.sidebar-val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);}
+
+/* ═══════════════════════════════════
+   3. PROJECTS
+═══════════════════════════════════ */
+#projects{background:var(--card);}
+.proj-filter{display:flex;gap:8px;margin:30px 0;flex-wrap:wrap;}
+.pf-btn{
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;
+  padding:7px 16px;background:transparent;border:1px solid rgba(255,255,255,.08);
+  color:var(--t2);cursor:none;transition:all .25s;
+}
+.pf-btn:hover,.pf-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(var(--c),.06);}
+
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.proj-card{
+  background:var(--bg);border:1px solid var(--border);
+  padding:28px;position:relative;overflow:hidden;
+  cursor:none;transition:all .35s;
+}
+.proj-card:hover{border-color:rgba(var(--c),.25);transform:translateY(-4px);}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.pc-gaming::before{background:linear-gradient(to right,var(--cyan),var(--purple));}
+.pc-web::before{background:linear-gradient(to right,var(--purple),var(--red));}
+.pc-app::before{background:linear-gradient(to right,var(--gold),#ff6b00);}
+.pc-exp::before{background:linear-gradient(to right,#00ff88,var(--cyan));}
+
+.proj-cat{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;margin-bottom:12px;}
+.proj-name{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;letter-spacing:.5px;margin-bottom:8px;line-height:1.2;}
+.proj-desc{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:16px;}
+.proj-stack{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px;}
+.stack-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--t3);}
+.proj-status{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:2px;}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.s-live{background:var(--cyan);box-shadow:0 0 8px rgba(var(--c),.6);}
+.s-dev{background:var(--gold);box-shadow:0 0 8px rgba(var(--g),.6);animation:blink 1.5s infinite;}
+.s-plan{background:var(--t3);}
+.proj-links{position:absolute;bottom:24px;right:24px;display:flex;gap:8px;opacity:0;transition:opacity .3s;}
+.proj-card:hover .proj-links{opacity:1;}
+.proj-link{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:5px 10px;border:1px solid rgba(var(--c),.3);color:var(--cyan);transition:all .2s;}
+.proj-link:hover{background:rgba(var(--c),.1);}
+
+/* Demo Gallery */
+.demo-gallery{margin-top:50px;}
+.dg-title{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--cyan);margin-bottom:20px;}
+.dg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.dg-item{
+  background:var(--mid);border:1px solid var(--border);
+  aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  font-size:32px;cursor:none;transition:all .3s;position:relative;overflow:hidden;
+}
+.dg-item:hover{border-color:rgba(var(--c),.3);transform:scale(1.02);}
+.dg-label{position:absolute;bottom:0;left:0;right:0;padding:8px;background:linear-gradient(to top,rgba(3,5,8,.9),transparent);font-size:10px;letter-spacing:2px;color:var(--t2);opacity:0;transition:opacity .3s;}
+.dg-item:hover .dg-label{opacity:1;}
+
+/* ═══════════════════════════════════
+   4. VISION
+═══════════════════════════════════ */
+#vision{background:var(--bg);}
+.vision-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:50px;}
+.vision-left{}
+.vision-concept{
+  background:var(--card);border:1px solid var(--border);
+  padding:36px;margin-bottom:24px;position:relative;overflow:hidden;
+}
+.vision-concept::after{content:'VNG';position:absolute;bottom:-10px;right:-10px;font-family:'Orbitron',sans-serif;font-size:80px;font-weight:900;color:rgba(var(--c),.03);letter-spacing:-2px;}
+.vc-icon{font-size:40px;margin-bottom:16px;display:block;}
+.vc-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:10px;}
+.vc-body{font-size:14px;color:var(--t2);line-height:1.65;}
+
+/* Roadmap */
+.roadmap{margin-top:50px;}
+.rm-title{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--cyan);margin-bottom:24px;}
+.rm-timeline{position:relative;}
+.rm-timeline::before{content:'';position:absolute;left:16px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--cyan),var(--purple),transparent);}
+.rm-item{display:flex;gap:24px;margin-bottom:28px;position:relative;}
+.rm-dot{
+  flex-shrink:0;width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;
+  border:1px solid;z-index:1;
+}
+.rm-done{background:rgba(var(--c),.15);border-color:var(--cyan);color:var(--cyan);}
+.rm-current{background:rgba(var(--p),.15);border-color:var(--purple);color:var(--purple);animation:blink 2s infinite;}
+.rm-next{background:rgba(255,255,255,.03);border-color:var(--t3);color:var(--t3);}
+.rm-content{}
+.rm-phase{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--t3);margin-bottom:4px;}
+.rm-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:4px;}
+.rm-desc{font-size:13px;color:var(--t2);line-height:1.5;}
+
+/* Why VNG */
+.why-vng{margin-top:50px;}
+.why-items{display:flex;flex-direction:column;gap:0;}
+.why-item{
+  display:grid;grid-template-columns:50px 1fr;gap:20px;
+  padding:20px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  align-items:start;
+}
+.why-item:last-child{border-bottom:none;}
+.why-num{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:rgba(var(--c),.2);}
+.why-text-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:5px;}
+.why-text-body{font-size:13px;color:var(--t2);line-height:1.55;}
+
+/* Dream projects */
+.dream-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.dream-card{background:var(--mid);border:1px solid var(--border);padding:20px;transition:all .3s;cursor:none;}
+.dream-card:hover{border-color:rgba(var(--p),.3);}
+.dream-icon{font-size:24px;margin-bottom:8px;}
+.dream-name{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.dream-desc{font-size:12px;color:var(--t2);}
+
+/* ═══════════════════════════════════
+   5. COMMUNITY
+═══════════════════════════════════ */
+#community{background:var(--card);}
+.comm-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
+
+.discord-card{
+  background:linear-gradient(135deg,#1a1040 0%,#0a0618 100%);
+  border:1px solid rgba(88,101,242,.3);padding:40px;
+  position:relative;overflow:hidden;cursor:none;transition:all .35s;
+  grid-row:span 2;
+}
+.discord-card:hover{border-color:rgba(88,101,242,.6);transform:translateY(-3px);}
+.discord-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(88,101,242,.06) 0%,transparent 60%);pointer-events:none;}
+.dc-icon{font-size:52px;margin-bottom:20px;}
+.dc-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;color:#7289da;margin-bottom:8px;}
+.dc-sub{font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:24px;}
+.dc-stat{display:flex;gap:24px;margin-bottom:28px;}
+.dc-stat-item{text-align:center;}
+.dc-stat-num{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:#7289da;}
+.dc-stat-label{font-size:10px;letter-spacing:2px;color:var(--t3);margin-top:3px;}
+.btn-discord{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;padding:14px 32px;background:#5865f2;color:#fff;border:none;cursor:none;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);}
+.btn-discord:hover{background:#4752c4;box-shadow:0 0 30px rgba(88,101,242,.4);}
+
+.whatsapp-card{
+  background:linear-gradient(135deg,#0a1f12 0%,#060f09 100%);
+  border:1px solid rgba(37,211,102,.2);padding:28px;
+  cursor:none;transition:all .35s;
+}
+.whatsapp-card:hover{border-color:rgba(37,211,102,.45);}
+.wa-icon{font-size:32px;margin-bottom:12px;}
+.wa-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:#25d366;margin-bottom:6px;}
+.wa-sub{font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:16px;}
+.btn-wa{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;padding:10px 22px;background:#25d366;color:#000;border:none;cursor:none;font-weight:700;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.btn-wa:hover{background:#1da851;box-shadow:0 0 20px rgba(37,211,102,.3);}
+
+/* Community rules */
+.rules-card{background:var(--bg);border:1px solid var(--border);padding:28px;}
+.rule-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:flex-start;}
+.rule-item:last-child{border-bottom:none;}
+.rule-num{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:rgba(var(--c),.3);flex-shrink:0;width:24px;}
+.rule-text{font-size:13px;color:var(--t2);line-height:1.5;}
+
+/* Events */
+.comm-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.event-card{background:var(--bg);border:1px solid var(--border);padding:24px;}
+.ev-list{margin-top:12px;display:flex;flex-direction:column;gap:0;}
+.ev-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:center;}
+.ev-item:last-child{border-bottom:none;}
+.ev-icon{font-size:22px;flex-shrink:0;}
+.ev-name{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;margin-bottom:2px;}
+.ev-date{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--t3);letter-spacing:1px;}
+.ev-prize{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--gold);margin-left:auto;white-space:nowrap;}
+
+/* Fan creations */
+.fan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.fan-item{background:var(--mid);border:1px solid var(--border);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:none;transition:all .3s;}
+.fan-item:hover{border-color:rgba(var(--c),.3);transform:scale(1.04);}
+
+/* ═══════════════════════════════════
+   6. ABOUT
+═══════════════════════════════════ */
+#about{background:var(--bg);}
+.about-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:50px;}
+
+/* Profile Card */
+.profile-card{
+  background:var(--card);border:1px solid var(--border);
+  padding:36px;text-align:center;position:relative;overflow:hidden;
+}
+.profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--cyan),var(--purple));}
+.profile-avatar{
+  width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(var(--c),.2),rgba(var(--p),.2));
+  border:2px solid rgba(var(--c),.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;
+  color:var(--cyan);margin:0 auto 20px;
+  text-shadow:0 0 20px rgba(var(--c),.5);
+}
+.profile-name{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:2px;color:var(--t1);margin-bottom:4px;}
+.profile-role{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--purple);margin-bottom:8px;}
+.profile-loc{font-size:13px;color:var(--t3);letter-spacing:1px;margin-bottom:20px;}
+.profile-bio{font-size:14px;color:var(--t2);line-height:1.65;text-align:left;margin-bottom:24px;}
+.profile-socials{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.soc-btn{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;
+  padding:7px 14px;border:1px solid rgba(255,255,255,.08);color:var(--t2);
+  transition:all .25s;cursor:none;
+}
+.soc-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(var(--c),.06);}
+
+/* Skills */
+.skills-section{margin-top:30px;}
+.skill-item{margin-bottom:18px;}
+.skill-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.skill-name{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;}
+.skill-pct{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);}
+.skill-bar{height:3px;background:rgba(255,255,255,.06);overflow:hidden;}
+.skill-fill{height:100%;border-radius:0;background:linear-gradient(to right,var(--cyan),var(--purple));width:0;transition:width 1.2s cubic-bezier(.25,.46,.45,.94);}
+
+/* Journey timeline */
+.journey{margin-top:0;}
+.j-title{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--cyan);margin-bottom:20px;}
+.j-items{position:relative;}
+.j-items::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--cyan),rgba(var(--c),.1));}
+.j-item{display:flex;gap:20px;margin-bottom:24px;position:relative;}
+.j-dot{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1;background:var(--bg);}
+.j-dot-c{border-color:var(--cyan);color:var(--cyan);}
+.j-dot-p{border-color:var(--purple);color:var(--purple);}
+.j-dot-g{border-color:var(--gold);color:var(--gold);}
+.j-year{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);margin-bottom:3px;}
+.j-event{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;margin-bottom:3px;}
+.j-note{font-size:12px;color:var(--t2);line-height:1.5;}
+
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.contact-card{background:var(--mid);border:1px solid var(--border);padding:16px;display:flex;align-items:center;gap:12px;cursor:none;transition:all .3s;}
+.contact-card:hover{border-color:rgba(var(--c),.25);}
+.contact-icon{font-size:22px;}
+.contact-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);}
+.contact-val{font-size:13px;color:var(--t1);letter-spacing:.5px;}
+
+/* ═══ FOOTER ═══ */
+footer{
+  position:relative;z-index:1;background:var(--card);
+  border-top:1px solid var(--border);
+  padding:50px 60px 30px;
+}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;flex-wrap:wrap;gap:30px;}
+.footer-brand{}
+.footer-logo{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);letter-spacing:3px;text-shadow:0 0 20px rgba(var(--c),.3);}
+.footer-logo span{color:var(--purple);}
+.footer-tagline{font-size:13px;color:var(--t3);letter-spacing:2px;margin-top:6px;}
+.footer-links-row{display:flex;gap:50px;flex-wrap:wrap;}
+.footer-col-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--cyan);margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.footer-col a{font-size:13px;color:var(--t2);transition:color .2s;letter-spacing:.5px;}
+.footer-col a:hover{color:var(--t1);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.04);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-copy{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--t3);letter-spacing:2px;}
+.footer-soc{display:flex;gap:8px;}
+.fsoc-btn{width:32px;height:32px;border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t3);transition:all .3s;cursor:none;}
+.fsoc-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* ═══ KEYFRAMES ═══ */
+@keyframes orb-pulse{0%,100%{transform:scale(1);opacity:.09;}50%{transform:scale(1.12);opacity:.14;}}
+@keyframes vng-glow{0%{filter:drop-shadow(0 0 40px rgba(var(--c),.2));}100%{filter:drop-shadow(0 0 70px rgba(var(--p),.3));}}
+@keyframes hex-spin{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+/* Mobile menu */
+@media(max-width:900px){
+  .nav-links{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(3,5,8,.97);flex-direction:column;gap:0;padding:20px 0;border-bottom:1px solid var(--border);}
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:14px 30px;border:none;border-bottom:1px solid rgba(255,255,255,.03);}
+  .hamburger{display:flex;}
+  .nav-cta{display:none;}
+  section{padding:80px 24px;}
+  #qnav{padding:60px 24px;}
+  .qnav-grid{grid-template-columns:1fr 1fr;}
+  .updates-layout{grid-template-columns:1fr;}
+  .proj-grid{grid-template-columns:1fr 1fr;}
+  .dg-grid{grid-template-columns:repeat(2,1fr);}
+  .vision-layout{grid-template-columns:1fr;}
+  .comm-hero-grid{grid-template-columns:1fr;}
+  .discord-card{grid-row:auto;}
+  .comm-bottom{grid-template-columns:1fr;}
+  .about-layout{grid-template-columns:1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  .footer-links-row{gap:30px;}
+  nav{padding:0 20px;}
+  footer{padding:40px 24px 24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="curdot"></div>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<canvas id="pcanvas"></canvas>
+
+<!-- ═══ NAV ═══ -->
+<nav id="navbar">
+  <a href="#home" class="logo">VNG<span>·</span><sub>NOVA</sub></a>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="#home" class="nav-icon">🏠</a></li>
+    <li><a href="#updates">📢 UPDATES</a></li>
+    <li><a href="#projects">🎮 PROJECTS</a></li>
+    <li><a href="#vision">🚀 VISION</a></li>
+    <li><a href="#community">🌐 COMMUNITY</a></li>
+    <li><a href="#about">👨‍💻 ABOUT</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.querySelector('#community').scrollIntoView({behavior:'smooth'})">JOIN VNG</button>
+  <div class="hamburger" id="hamburger" onclick="document.getElementById('navlinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     1. HOME
+══════════════════════════════════════════ -->
+<section id="home">
+  <div class="home-orb orb-a"></div>
+  <div class="home-orb orb-b"></div>
+  <div class="home-orb orb-c"></div>
+
+  <!-- Hex ring decoration -->
+  <svg class="hex-deco" width="700" height="700" viewBox="0 0 700 700">
+    <polygon points="350,30 640,187 640,513 350,670 60,513 60,187" fill="none" stroke="rgba(0,245,255,.08)" stroke-width="1"/>
+    <polygon points="350,80 600,215 600,485 350,620 100,485 100,215" fill="none" stroke="rgba(191,0,255,.06)" stroke-width=".5"/>
+    <polygon points="350,130 560,243 560,457 350,570 140,457 140,243" fill="none" stroke="rgba(0,245,255,.04)" stroke-width=".5"/>
+    <!-- Corner marks -->
+    <circle cx="350" cy="30" r="4" fill="rgba(0,245,255,.3)"/>
+    <circle cx="640" cy="187" r="4" fill="rgba(191,0,255,.3)"/>
+    <circle cx="640" cy="513" r="4" fill="rgba(0,245,255,.2)"/>
+    <circle cx="350" cy="670" r="4" fill="rgba(191,0,255,.2)"/>
+    <circle cx="60" cy="513" r="4" fill="rgba(0,245,255,.2)"/>
+    <circle cx="60" cy="187" r="4" fill="rgba(191,0,255,.3)"/>
+  </svg>
+
+  <div style="text-align:center;position:relative;z-index:2;animation:fadeUp .8s .2s both;">
+    <div class="vng-logo-main">VNG</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:6px;color:rgba(0,245,255,.4);margin-top:8px;">VENKY NOVA GENERATION</div>
+    <div class="home-tagline" style="margin-top:16px;">
+      <strong>Building The</strong> <span style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(18px,3vw,28px);">Venky Nova Generation</span>
+    </div>
+    <div style="font-size:14px;color:var(--t2);letter-spacing:3px;margin-top:12px;font-weight:300;">ONE PROJECT AT A TIME</div>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:36px;flex-wrap:wrap;">
+      <button class="btn-p" onclick="document.querySelector('#projects').scrollIntoView({behavior:'smooth'})">VIEW PROJECTS</button>
+      <button class="btn-s" onclick="document.querySelector('#vision').scrollIntoView({behavior:'smooth'})">OUR VISION</button>
+    </div>
+    <div style="display:flex;gap:30px;justify-content:center;margin-top:40px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);" class="cnt" data-val="12">0</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:3px;">PROJECTS</div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);" class="cnt" data-val="2400">0</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:3px;">COMMUNITY</div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);">2023</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:3px;">FOUNDED</div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);" class="cnt" data-val="98">0</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:3px;">% PASSION</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Nav -->
+<div id="qnav" style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="sec-eyebrow reveal">EXPLORE VNG</div>
+  <h2 class="sec-title reveal d1">WHAT'S <span style="color:var(--cyan)">INSIDE</span></h2>
+  <div class="qnav-grid">
+    <a href="#updates" class="qnav-card reveal d1">
+      <span class="qnav-icon">📢</span>
+      <div class="qnav-name">UPDATES</div>
+      <div class="qnav-desc">Latest news, changelogs, YouTube drops and project progress</div>
+      <span class="qnav-arrow">→</span>
+    </a>
+    <a href="#projects" class="qnav-card reveal d2">
+      <span class="qnav-icon">🎮</span>
+      <div class="qnav-name">PROJECTS</div>
+      <div class="qnav-desc">Games, websites, apps and experimental builds from VNG</div>
+      <span class="qnav-arrow">→</span>
+    </a>
+    <a href="#vision" class="qnav-card reveal d3">
+      <span class="qnav-icon">🚀</span>
+      <div class="qnav-name">VISION</div>
+      <div class="qnav-desc">The Nova Generation roadmap, goals and dream projects</div>
+      <span class="qnav-arrow">→</span>
+    </a>
+    <a href="#community" class="qnav-card reveal d1">
+      <span class="qnav-icon">🌐</span>
+      <div class="qnav-name">COMMUNITY</div>
+      <div class="qnav-desc">Discord, WhatsApp, events, challenges and fan creations</div>
+      <span class="qnav-arrow">→</span>
+    </a>
+    <a href="#about" class="qnav-card reveal d2">
+      <span class="qnav-icon">👨‍💻</span>
+      <div class="qnav-name">ABOUT VENKY</div>
+      <div class="qnav-desc">The founder's story, skills, journey and contact links</div>
+      <span class="qnav-arrow">→</span>
+    </a>
+    <div class="qnav-card reveal d3" style="background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(191,0,255,.05));cursor:none;" onclick="document.querySelector('#community').scrollIntoView({behavior:'smooth'})">
+      <span class="qnav-icon">⚡</span>
+      <div class="qnav-name">JOIN NOW</div>
+      <div class="qnav-desc">Become part of the Venky Nova Generation today — free forever</div>
+      <span class="qnav-arrow" style="color:var(--cyan);">→</span>
+    </div>
+  </div>
+</div>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     2. UPDATES
+══════════════════════════════════════════ -->
+<section id="updates">
+  <div class="sec-eyebrow reveal">WHAT'S NEW</div>
+  <h2 class="sec-title reveal d1">UPDATES <span style="color:var(--cyan)">&amp; CHANGELOG</span></h2>
+  <p class="sec-sub reveal d2">Stay up to date with everything happening across VNG — from website pushes to YouTube uploads to behind-the-scenes project progress.</p>
+
+  <div class="updates-layout" style="margin-top:50px;">
+    <div class="changelog">
+
+      <div class="cl-entry reveal">
+        <div class="cl-dot" style="background:var(--cyan);box-shadow:0 0 8px rgba(0,245,255,.5);"></div>
+        <div class="cl-date">JUN 06, 2026 · v2.1.0</div>
+        <span class="cl-badge badge-site">WEBSITE UPDATE</span>
+        <div class="cl-title">VNG Website 2.0 Launched</div>
+        <div class="cl-body">The brand new VNG portal is live. Full redesign with 6 sections, particle animations, custom cursor, 3D hero, project showcase, and full community integration. Built from scratch with pure HTML/CSS/JS — no frameworks.</div>
+        <div class="cl-tags">
+          <span class="cl-tag">DESIGN</span>
+          <span class="cl-tag">HTML/CSS</span>
+          <span class="cl-tag">ANIMATIONS</span>
+          <span class="cl-tag">PERFORMANCE</span>
+        </div>
+      </div>
+
+      <div class="cl-entry reveal d1">
+        <div class="cl-dot" style="background:var(--red);box-shadow:0 0 8px rgba(255,0,60,.5);"></div>
+        <div class="cl-date">MAY 28, 2026</div>
+        <span class="cl-badge badge-yt">YOUTUBE UPDATE</span>
+        <div class="cl-title">New Video: "Building Nova Strike from Scratch"</div>
+        <div class="cl-body">Devlog episode 4 dropped — covering the core FPS mechanics, hit detection system, and early weapon design. 45 minutes of pure build content. 12K views in 48 hours.</div>
+        <div class="cl-tags"><span class="cl-tag">DEVLOG</span><span class="cl-tag">GAMING</span><span class="cl-tag">TUTORIAL</span></div>
+      </div>
+
+      <div class="cl-entry reveal d2">
+        <div class="cl-dot" style="background:var(--purple);box-shadow:0 0 8px rgba(191,0,255,.5);"></div>
+        <div class="cl-date">MAY 15, 2026</div>
+        <span class="cl-badge badge-proj">PROJECT PROGRESS</span>
+        <div class="cl-title">Shadow Realm X — Beta Phase Started</div>
+        <div class="cl-body">The VNG flagship game hit internal beta this week. 50+ testers onboarded from the Discord. Gathering feedback on movement system, map design, and netcode. Major milestone for the team.</div>
+        <div class="cl-tags"><span class="cl-tag">BETA</span><span class="cl-tag">GAMING</span><span class="cl-tag">MILESTONE</span></div>
+      </div>
+
+      <div class="cl-entry reveal d1">
+        <div class="cl-dot" style="background:var(--gold);box-shadow:0 0 8px rgba(255,215,0,.5);"></div>
+        <div class="cl-date">MAY 01, 2026</div>
+        <span class="cl-badge badge-ann">ANNOUNCEMENT</span>
+        <div class="cl-title">VNG App Coming This Summer</div>
+        <div class="cl-body">Officially announcing the VNG mobile app for Android. Track community updates, get tournament alerts, view project progress and chat with members — all in your pocket. Launching July 2026.</div>
+        <div class="cl-tags"><span class="cl-tag">APP</span><span class="cl-tag">ANDROID</span><span class="cl-tag">2026</span></div>
+      </div>
+
+      <div class="cl-entry reveal d2">
+        <div class="cl-dot" style="background:#00ff88;box-shadow:0 0 8px rgba(0,255,136,.5);"></div>
+        <div class="cl-date">APR 20, 2026 · v1.9.2</div>
+        <span class="cl-badge badge-fix">BUG FIX</span>
+        <div class="cl-title">Discord Bot Update + Nav Fix</div>
+        <div class="cl-body">Fixed mobile navbar collapse bug on iOS Safari. Updated the VNG Discord bot with new !leaderboard and !events commands. Patched XP tracking issue affecting 200+ members.</div>
+        <div class="cl-tags"><span class="cl-tag">FIX</span><span class="cl-tag">DISCORD</span><span class="cl-tag">MOBILE</span></div>
+      </div>
+
+      <div class="cl-entry reveal d1">
+        <div class="cl-dot" style="background:var(--red);"></div>
+        <div class="cl-date">APR 10, 2026</div>
+        <span class="cl-badge badge-yt">YOUTUBE UPDATE</span>
+        <div class="cl-title">VNG Hit 5,000 YouTube Subscribers</div>
+        <div class="cl-body">Reached a massive milestone — 5K subscribers on YouTube. Thank you to every single one of you who watches, comments and shares. More content incoming every week.</div>
+        <div class="cl-tags"><span class="cl-tag">MILESTONE</span><span class="cl-tag">COMMUNITY</span></div>
+      </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="updates-sidebar">
+      <div class="sidebar-card reveal">
+        <div class="sidebar-title">📊 PROJECT STATUS</div>
+        <div class="sidebar-row"><span class="sidebar-label">Shadow Realm X</span><span class="sidebar-val" style="color:var(--gold);">BETA</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Nova Strike</span><span class="sidebar-val" style="color:var(--purple);">DEV</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">VNG Website</span><span class="sidebar-val" style="color:var(--cyan);">LIVE ✓</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">VNG App</span><span class="sidebar-val" style="color:var(--gold);">BUILDING</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Hyper Drift</span><span class="sidebar-val" style="color:var(--t3);">PLANNED</span></div>
+      </div>
+
+      <div class="sidebar-card reveal d1">
+        <div class="sidebar-title">📺 YOUTUBE STATS</div>
+        <div class="sidebar-row"><span class="sidebar-label">Subscribers</span><span class="sidebar-val">5,280</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Total Videos</span><span class="sidebar-val">47</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Total Views</span><span class="sidebar-val">284K</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Latest Upload</span><span class="sidebar-val">2d ago</span></div>
+      </div>
+
+      <div class="sidebar-card reveal d2">
+        <div class="sidebar-title">🌐 COMMUNITY STATS</div>
+        <div class="sidebar-row"><span class="sidebar-label">Discord Members</span><span class="sidebar-val">2,418</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Online Now</span><span class="sidebar-val" style="color:#00ff88;">● 347</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">WhatsApp Channel</span><span class="sidebar-val">1,100+</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Countries</span><span class="sidebar-val">34</span></div>
+      </div>
+
+      <div class="sidebar-card reveal d3">
+        <div class="sidebar-title">🔮 UPCOMING</div>
+        <div class="sidebar-row"><span class="sidebar-label">VNG App Beta</span><span class="sidebar-val">JUL 2026</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Devlog #5</span><span class="sidebar-val">JUN 14</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Community Event</span><span class="sidebar-val">JUN 20</span></div>
+        <div class="sidebar-row"><span class="sidebar-label">Public Demo</span><span class="sidebar-val">AUG 2026</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     3. PROJECTS
+══════════════════════════════════════════ -->
+<section id="projects">
+  <div class="sec-eyebrow reveal">WHAT WE BUILD</div>
+  <h2 class="sec-title reveal d1">VNG <span style="color:var(--cyan)">PROJECTS</span></h2>
+  <p class="sec-sub reveal d2">Games, websites, apps and experiments — everything built by Venky Nova Generation, from idea to deployment.</p>
+
+  <div class="proj-filter reveal d2">
+    <button class="pf-btn active" onclick="filterProj(this,'all')">ALL</button>
+    <button class="pf-btn" onclick="filterProj(this,'gaming')">🎮 GAMING</button>
+    <button class="pf-btn" onclick="filterProj(this,'web')">🌐 WEBSITES</button>
+    <button class="pf-btn" onclick="filterProj(this,'app')">📱 APPS</button>
+    <button class="pf-btn" onclick="filterProj(this,'exp')">🧪 EXPERIMENTAL</button>
+  </div>
+
+  <div class="proj-grid" id="proj-grid">
+
+    <div class="proj-card pc-gaming reveal" data-cat="gaming">
+      <div class="proj-cat" style="color:var(--cyan);">🎮 VENKY NOVA GAMING</div>
+      <div class="proj-name">Shadow Realm X</div>
+      <div class="proj-desc">The flagship VNG battle royale. 120 players, unique shrinking biomes, custom weapons and ranking system. Currently in closed beta with 50+ testers.</div>
+      <div class="proj-stack"><span class="stack-tag">UNITY</span><span class="stack-tag">C#</span><span class="stack-tag">PHOTON</span><span class="stack-tag">PLAYFAB</span></div>
+      <div class="proj-status"><span class="status-dot s-dev"></span><span style="color:var(--gold);font-size:10px;letter-spacing:2px;">BETA TESTING</span></div>
+      <div class="proj-links"><span class="proj-link">DEMO</span><span class="proj-link">DISCORD</span></div>
+    </div>
+
+    <div class="proj-card pc-gaming reveal d1" data-cat="gaming">
+      <div class="proj-cat" style="color:var(--red);">🔫 FUTURE GAME</div>
+      <div class="proj-name">Nova Strike</div>
+      <div class="proj-desc">5v5 tactical FPS with destructible environments, custom economy, and ranked competitive mode. Inspired by pro esports design principles.</div>
+      <div class="proj-stack"><span class="stack-tag">UNREAL 5</span><span class="stack-tag">C++</span><span class="stack-tag">BLUEPRINTS</span></div>
+      <div class="proj-status"><span class="status-dot s-dev"></span><span style="color:var(--gold);font-size:10px;letter-spacing:2px;">IN DEVELOPMENT</span></div>
+      <div class="proj-links"><span class="proj-link">DEVLOG</span></div>
+    </div>
+
+    <div class="proj-card pc-gaming reveal d2" data-cat="gaming">
+      <div class="proj-cat" style="color:var(--gold);">🏎 FUTURE GAME</div>
+      <div class="proj-name">Hyper Drift</div>
+      <div class="proj-desc">Open-world racing game set in a neon city. Drift mechanics, vehicle customization, online multiplayer and weekly time trials.</div>
+      <div class="proj-stack"><span class="stack-tag">UNITY</span><span class="stack-tag">SHADER GRAPH</span></div>
+      <div class="proj-status"><span class="status-dot s-plan"></span><span style="color:var(--t3);font-size:10px;letter-spacing:2px;">PLANNED · 2027</span></div>
+    </div>
+
+    <div class="proj-card pc-web reveal d1" data-cat="web">
+      <div class="proj-cat" style="color:var(--purple);">🌐 WEBSITE</div>
+      <div class="proj-name">VNG Portal (This Site)</div>
+      <div class="proj-desc">The official Venky Nova Generation hub. Updates, projects, vision, community links and about page. Built with pure HTML/CSS/JS — zero frameworks, zero dependencies.</div>
+      <div class="proj-stack"><span class="stack-tag">HTML5</span><span class="stack-tag">CSS3</span><span class="stack-tag">VANILLA JS</span></div>
+      <div class="proj-status"><span class="status-dot s-live"></span><span style="color:var(--cyan);font-size:10px;letter-spacing:2px;">LIVE ✓</span></div>
+      <div class="proj-links"><span class="proj-link">YOU'RE HERE</span></div>
+    </div>
+
+    <div class="proj-card pc-app reveal d2" data-cat="app">
+      <div class="proj-cat" style="color:var(--gold);">📱 APP</div>
+      <div class="proj-name">VNG Mobile App</div>
+      <div class="proj-desc">Android app for the VNG community. Push notifications for updates, project tracker, event calendar, leaderboards and direct Discord integration.</div>
+      <div class="proj-stack"><span class="stack-tag">FLUTTER</span><span class="stack-tag">DART</span><span class="stack-tag">FIREBASE</span></div>
+      <div class="proj-status"><span class="status-dot s-dev"></span><span style="color:var(--gold);font-size:10px;letter-spacing:2px;">BUILDING · JUL 2026</span></div>
+    </div>
+
+    <div class="proj-card pc-exp reveal d3" data-cat="exp">
+      <div class="proj-cat" style="color:#00ff88;">🧪 EXPERIMENTAL</div>
+      <div class="proj-name">VNG AI Companion</div>
+      <div class="proj-desc">AI-powered game companion that tracks your playstyle, suggests improvements, and gives real-time coaching tips. Exploring LLM + game API integration.</div>
+      <div class="proj-stack"><span class="stack-tag">PYTHON</span><span class="stack-tag">CLAUDE API</span><span class="stack-tag">REACT</span></div>
+      <div class="proj-status"><span class="status-dot s-dev"></span><span style="color:var(--gold);font-size:10px;letter-spacing:2px;">PROTOTYPE</span></div>
+    </div>
+
+  </div>
+
+  <!-- Screenshots & Demos -->
+  <div class="demo-gallery reveal" style="margin-top:50px;">
+    <div class="dg-title">📸 SCREENSHOTS &amp; DEMOS</div>
+    <div class="dg-grid">
+      <div class="dg-item">⚔<div class="dg-label">SHADOW REALM X · GAMEPLAY</div></div>
+      <div class="dg-item">🗺<div class="dg-label">SHADOW REALM X · MAP VIEW</div></div>
+      <div class="dg-item">🔫<div class="dg-label">NOVA STRIKE · EARLY BUILD</div></div>
+      <div class="dg-item">🏎<div class="dg-label">HYPER DRIFT · CONCEPT ART</div></div>
+      <div class="dg-item">📱<div class="dg-label">VNG APP · UI MOCKUP</div></div>
+      <div class="dg-item">🌐<div class="dg-label">VNG PORTAL · v1.0</div></div>
+      <div class="dg-item">🤖<div class="dg-label">AI COMPANION · PROTOTYPE</div></div>
+      <div class="dg-item" style="border-style:dashed;border-color:rgba(0,245,255,.15);">
+        <span style="font-size:14px;color:var(--t3);font-family:'Share Tech Mono';letter-spacing:2px;">MORE SOON</span>
+        <div class="dg-label">COMING SOON</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     4. VISION
+══════════════════════════════════════════ -->
+<section id="vision">
+  <div class="sec-eyebrow reveal">THE BIG PICTURE</div>
+  <h2 class="sec-title reveal d1">NOVA <span style="color:var(--purple)">GENERATION VISION</span></h2>
+  <p class="sec-sub reveal d2">VNG isn't just games or websites — it's a movement. A generation of creators, players and builders who make things that matter.</p>
+
+  <div class="vision-layout">
+    <div class="vision-left">
+      <!-- Concept cards -->
+      <div class="vision-concept reveal">
+        <span class="vc-icon">💡</span>
+        <div class="vc-title">WHAT IS THE NOVA GENERATION?</div>
+        <div class="vc-body">The Venky Nova Generation is a community-first creator movement built around three pillars: Build, Play, and Inspire. We create games, tools and content that prove what one passionate person with a vision can build — and invite others to join the journey and build their own.</div>
+      </div>
+
+      <div class="vision-concept reveal d1">
+        <span class="vc-icon">🎯</span>
+        <div class="vc-title">WHY VNG EXISTS</div>
+        <div class="vc-body">Most indie developers build in silence. VNG exists to build in public — showing every step, every mistake, every breakthrough. We believe that transparency inspires the next generation of creators who think "if they can do it, so can I." That's the Nova effect.</div>
+      </div>
+
+      <div class="vision-concept reveal d2">
+        <span class="vc-icon">🚀</span>
+        <div class="vc-title">FUTURE GOALS</div>
+        <div class="vc-body">Launch a commercially successful game before 2028. Build a VNG creator network of 50+ indie devs. Host our first live tournament with a ₹5L+ prize pool. Establish VNG as a recognised indie studio from India on the global stage.</div>
+      </div>
+
+      <!-- Dream projects -->
+      <div class="reveal d1" style="margin-top:30px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--gold);margin-bottom:16px;">⭐ DREAM PROJECTS</div>
+        <div class="dream-grid">
+          <div class="dream-card">
+            <div class="dream-icon">🌌</div>
+            <div class="dream-name">NOVA UNIVERSE</div>
+            <div class="dream-desc">Shared lore universe across all VNG games</div>
+          </div>
+          <div class="dream-card">
+            <div class="dream-icon">🏟</div>
+            <div class="dream-name">VNG ARENA</div>
+            <div class="dream-desc">Physical gaming café and esports training hub</div>
+          </div>
+          <div class="dream-card">
+            <div class="dream-icon">🎓</div>
+            <div class="dream-name">VNG ACADEMY</div>
+            <div class="dream-desc">Free gamedev and coding courses for students</div>
+          </div>
+          <div class="dream-card">
+            <div class="dream-icon">📺</div>
+            <div class="dream-name">VNG NETWORK</div>
+            <div class="dream-desc">Creator network streaming & content platform</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vision-right">
+      <!-- Roadmap -->
+      <div class="roadmap reveal">
+        <div class="rm-title">🗺 VNG ROADMAP</div>
+        <div class="rm-timeline">
+
+          <div class="rm-item">
+            <div class="rm-dot rm-done">✓</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 1 · 2023</div>
+              <div class="rm-name">FOUNDATION</div>
+              <div class="rm-desc">Started VNG, launched YouTube channel, built first prototype games and established the community Discord.</div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-dot rm-done">✓</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 2 · 2024</div>
+              <div class="rm-name">COMMUNITY BUILD</div>
+              <div class="rm-desc">Grew Discord to 1000+ members, launched WhatsApp channel, hit 2K YouTube subs, released first playable game demo.</div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-dot rm-done">✓</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 3 · 2025</div>
+              <div class="rm-name">GAME DEVELOPMENT</div>
+              <div class="rm-desc">Shadow Realm X moved from concept to playable beta. Nova Strike development started. VNG brand formalised.</div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-dot rm-current">●</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 4 · 2026 — NOW</div>
+              <div class="rm-name">LAUNCH &amp; SCALE</div>
+              <div class="rm-desc">VNG website 2.0 live. Mobile app in development. Shadow Realm X public launch target Q3. Growing community to 5K+.</div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-dot rm-next">5</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 5 · 2027</div>
+              <div class="rm-name">STUDIO FORMATION</div>
+              <div class="rm-desc">Register VNG as a formal indie studio. First paid game release. Hire first team members. Host first physical community event.</div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-dot rm-next">6</div>
+            <div class="rm-content">
+              <div class="rm-phase">PHASE 6 · 2028+</div>
+              <div class="rm-name">NOVA IMPACT</div>
+              <div class="rm-desc">VNG Academy launches. First AAA-quality indie title ships. VNG recognized as one of India's top indie game studios.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Why VNG points -->
+      <div class="why-vng reveal d2" style="margin-top:40px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--cyan);margin-bottom:16px;">💬 WHY THIS MATTERS</div>
+        <div class="why-items">
+          <div class="why-item">
+            <div class="why-num">01</div>
+            <div>
+              <div class="why-text-title">INDIA NEEDS INDIE GAMES</div>
+              <div class="why-text-body">The Indian gaming market is massive but has almost no homegrown indie titles. VNG wants to change that narrative permanently.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-num">02</div>
+            <div>
+              <div class="why-text-title">BUILD IN PUBLIC</div>
+              <div class="why-text-body">We share every step — the wins, the failures, the pivots. This transparency is our biggest differentiator and our community's greatest asset.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-num">03</div>
+            <div>
+              <div class="why-text-title">COMMUNITY FIRST</div>
+              <div class="why-text-body">Every decision, every game feature, every event is shaped by community feedback. VNG is built by its members as much as its founder.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     5. COMMUNITY
+══════════════════════════════════════════ -->
+<section id="community">
+  <div class="sec-eyebrow reveal">TOGETHER WE NOVA</div>
+  <h2 class="sec-title reveal d1">VNG <span style="color:var(--cyan)">COMMUNITY</span></h2>
+  <p class="sec-sub reveal d2">2,400+ members, 34 countries, one shared vision. Join the Discord, subscribe to the WhatsApp channel, and become part of the next generation.</p>
+
+  <div class="comm-hero-grid">
+    <!-- Discord -->
+    <div class="discord-card reveal">
+      <div class="dc-icon">🎮</div>
+      <div class="dc-title">VNG DISCORD SERVER</div>
+      <div class="dc-sub">The main hub. Chat, share work, get feedback, join events, find teammates and hang out with 2,400+ members from across the world. 24/7 active community with dedicated channels for games, dev, art, and general.</div>
+      <div class="dc-stat">
+        <div class="dc-stat-item">
+          <div class="dc-stat-num">2,418</div>
+          <div class="dc-stat-label">MEMBERS</div>
+        </div>
+        <div class="dc-stat-item">
+          <div class="dc-stat-num" style="color:#00ff88;">347</div>
+          <div class="dc-stat-label">ONLINE NOW</div>
+        </div>
+        <div class="dc-stat-item">
+          <div class="dc-stat-num">34</div>
+          <div class="dc-stat-label">COUNTRIES</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-discord" onclick="alert('Discord link would open here!')">JOIN DISCORD SERVER</button>
+        <button class="btn-s" style="font-size:9px;padding:12px 18px;">LEARN MORE</button>
+      </div>
+      <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:6px;">
+        <span class="chip" style="color:var(--cyan);border-color:rgba(0,245,255,.2);"># GENERAL</span>
+        <span class="chip" style="color:var(--purple);border-color:rgba(191,0,255,.2);"># GAME-DEV</span>
+        <span class="chip" style="color:var(--red);border-color:rgba(255,0,60,.2);"># COMPETITIVE</span>
+        <span class="chip" style="color:var(--gold);border-color:rgba(255,215,0,.2);"># SHOWCASE</span>
+        <span class="chip" style="color:#00ff88;border-color:rgba(0,255,136,.2);"># UPDATES</span>
+        <span class="chip" style="color:var(--t2);border-color:var(--border);"># MEMES</span>
+      </div>
+    </div>
+
+    <!-- WhatsApp -->
+    <div class="whatsapp-card reveal d1">
+      <div class="wa-icon">💬</div>
+      <div class="wa-title">WHATSAPP CHANNEL</div>
+      <div class="wa-sub">Get VNG updates, announcements and news delivered directly to your WhatsApp. One-way broadcast channel — no spam, just the important stuff.</div>
+      <div style="display:flex;gap:20px;margin-bottom:16px;">
+        <div><div style="font-family:'Orbitron';font-size:20px;font-weight:900;color:#25d366;">1,100+</div><div style="font-size:9px;letter-spacing:2px;color:var(--t3);">SUBSCRIBERS</div></div>
+        <div><div style="font-family:'Orbitron';font-size:20px;font-weight:900;color:#25d366;">Daily</div><div style="font-size:9px;letter-spacing:2px;color:var(--t3);">UPDATES</div></div>
+      </div>
+      <button class="btn-wa" onclick="alert('WhatsApp link would open here!')">SUBSCRIBE CHANNEL</button>
+    </div>
+
+    <!-- Rules -->
+    <div class="rules-card reveal d2">
+      <div style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--cyan);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);">📋 COMMUNITY RULES</div>
+      <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Respect every member. No harassment, hate speech or personal attacks — zero tolerance.</div></div>
+      <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Keep content relevant to the channel topic. No spam or unsolicited self-promo.</div></div>
+      <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Share your work, get feedback, support others. This is a builder community.</div></div>
+      <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">No cheating, hacking or rule-breaking in VNG game events. Fair play always.</div></div>
+      <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Have fun. Celebrate each other's wins. We grow together as the Nova Generation.</div></div>
+    </div>
+
+  </div>
+
+  <div class="comm-bottom">
+    <!-- Events -->
+    <div class="event-card reveal">
+      <div style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--cyan);margin-bottom:4px;">🎉 EVENTS &amp; CHALLENGES</div>
+      <div class="ev-list">
+        <div class="ev-item">
+          <div class="ev-icon">🏆</div>
+          <div>
+            <div class="ev-name">VNG MONTHLY TOURNAMENT</div>
+            <div class="ev-date">JUN 20, 2026 · SHADOW REALM X</div>
+          </div>
+          <div class="ev-prize">₹10,000</div>
+        </div>
+        <div class="ev-item">
+          <div class="ev-icon">🎨</div>
+          <div>
+            <div class="ev-name">FAN ART CHALLENGE #7</div>
+            <div class="ev-date">OPEN NOW · ENDS JUN 15</div>
+          </div>
+          <div class="ev-prize">SHOUTOUT</div>
+        </div>
+        <div class="ev-item">
+          <div class="ev-icon">💻</div>
+          <div>
+            <div class="ev-name">VNG GAME JAM</div>
+            <div class="ev-date">JUL 01 – JUL 07 · 48H BUILD</div>
+          </div>
+          <div class="ev-prize">FEATURED</div>
+        </div>
+        <div class="ev-item">
+          <div class="ev-icon">📹</div>
+          <div>
+            <div class="ev-name">CLIP OF THE MONTH</div>
+            <div class="ev-date">SUBMIT YOUR BEST PLAYS</div>
+          </div>
+          <div class="ev-prize">PRIZE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fan Creations -->
+    <div class="event-card reveal d2">
+      <div style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--purple);margin-bottom:4px;">🎨 FAN CREATIONS</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:16px;">Community-made artwork, videos, mods and fan projects — submitted to the #showcase channel.</div>
+      <div class="fan-grid">
+        <div class="fan-item" title="Fan Art">🎨</div>
+        <div class="fan-item" title="Fan Video">🎬</div>
+        <div class="fan-item" title="Fan Art">✏</div>
+        <div class="fan-item" title="3D Model">🧊</div>
+        <div class="fan-item" title="Music">🎵</div>
+        <div class="fan-item" style="border-style:dashed;font-size:14px;color:var(--t3);">+</div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="btn-s" style="font-size:9px;padding:10px 20px;width:100%;">SUBMIT YOUR CREATION</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════
+     6. ABOUT
+══════════════════════════════════════════ -->
+<section id="about">
+  <div class="sec-eyebrow reveal">THE FOUNDER</div>
+  <h2 class="sec-title reveal d1">ABOUT <span style="color:var(--cyan)">VENKY</span></h2>
+
+  <div class="about-layout">
+    <div>
+      <!-- Profile Card -->
+      <div class="profile-card reveal">
+        <div class="profile-avatar">V</div>
+        <div class="profile-name">VENKY</div>
+        <div class="profile-role">FOUNDER · VNG · GAME DEV · CREATOR</div>
+        <div class="profile-loc">📍 India · 🌐 VNG Universe</div>
+        <div class="profile-bio">
+          Hey, I'm Venky — founder of the Venky Nova Generation. I started this journey with one goal: to build games, websites and creative projects that inspire people and prove what passion plus consistency can achieve.<br><br>
+          I started coding at 15, fell in love with game development, and began building VNG as both a creative outlet and a community for people who love making things. Every project here is built solo — one commit at a time.<br><br>
+          I believe anyone can build something meaningful if they start, stay consistent, and share the journey.
+        </div>
+        <div class="profile-socials">
+          <a href="#" class="soc-btn">▶ YOUTUBE</a>
+          <a href="#" class="soc-btn">◈ INSTAGRAM</a>
+          <a href="#" class="soc-btn">𝕏 TWITTER</a>
+          <a href="#" class="soc-btn">💻 GITHUB</a>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div style="margin-top:16px;" class="reveal d1">
+        <div style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--cyan);margin-bottom:12px;">📬 CONTACT</div>
+        <div class="contact-grid">
+          <div class="contact-card">
+            <div class="contact-icon">📧</div>
+            <div>
+              <div class="contact-label">EMAIL</div>
+              <div class="contact-val">venky@vngnova.com</div>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon">💬</div>
+            <div>
+              <div class="contact-label">DISCORD DM</div>
+              <div class="contact-val">venky_nova#0001</div>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon">🐙</div>
+            <div>
+              <div class="contact-label">GITHUB</div>
+              <div class="contact-val">github.com/venky-nova</div>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon">📺</div>
+            <div>
+              <div class="contact-label">YOUTUBE</div>
+              <div class="contact-val">@VenkyNova</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Skills -->
+      <div class="skills-section reveal">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--cyan);margin-bottom:20px;">⚙ SKILLS</div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">UNITY / GAME DEV</span><span class="skill-pct">88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="88"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">HTML · CSS · JAVASCRIPT</span><span class="skill-pct">92%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="92"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">C# / GAME PROGRAMMING</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="80"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">UI / UX DESIGN</span><span class="skill-pct">75%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="75"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">VIDEO EDITING</span><span class="skill-pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="70"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">COMMUNITY BUILDING</span><span class="skill-pct">95%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="95"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">FLUTTER / DART</span><span class="skill-pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="60"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">PYTHON</span><span class="skill-pct">65%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-w="65"></div></div>
+        </div>
+      </div>
+
+      <!-- Journey -->
+      <div class="journey reveal d2" style="margin-top:36px;">
+        <div class="j-title">🛤 THE JOURNEY</div>
+        <div class="j-items">
+          <div class="j-item">
+            <div class="j-dot j-dot-c">🌱</div>
+            <div>
+              <div class="j-year">2020 · AGE 15</div>
+              <div class="j-event">FIRST LINE OF CODE</div>
+              <div class="j-note">Learned HTML/CSS from YouTube. Built a simple portfolio site. Got hooked on creating.</div>
+            </div>
+          </div>
+          <div class="j-item">
+            <div class="j-dot j-dot-p">🎮</div>
+            <div>
+              <div class="j-year">2021</div>
+              <div class="j-event">DISCOVERED GAME DEV</div>
+              <div class="j-note">Downloaded Unity, finished my first tutorial, built a tiny platformer. Knew immediately — this is it.</div>
+            </div>
+          </div>
+          <div class="j-item">
+            <div class="j-dot j-dot-g">📢</div>
+            <div>
+              <div class="j-year">2022</div>
+              <div class="j-event">STARTED YOUTUBE</div>
+              <div class="j-note">Began documenting the game dev journey. First video had 12 views — 11 of them were me refreshing.</div>
+            </div>
+          </div>
+          <div class="j-item">
+            <div class="j-dot j-dot-c">⚡</div>
+            <div>
+              <div class="j-year">2023</div>
+              <div class="j-event">FOUNDED VNG</div>
+              <div class="j-note">Created the Venky Nova Generation brand. Launched Discord. First 100 members in 2 months.</div>
+            </div>
+          </div>
+          <div class="j-item">
+            <div class="j-dot j-dot-p">🚀</div>
+            <div>
+              <div class="j-year">2024–2025</div>
+              <div class="j-event">COMMUNITY GROWTH</div>
+              <div class="j-note">VNG grew to 2000+ members. Started building Shadow Realm X. Reached 3K YouTube subscribers.</div>
+            </div>
+          </div>
+          <div class="j-item">
+            <div class="j-dot j-dot-g" style="animation:blink 2s infinite;">●</div>
+            <div>
+              <div class="j-year">2026 · NOW</div>
+              <div class="j-event">THE NOVA ERA BEGINS</div>
+              <div class="j-note">VNG 2.0 website live. Game in beta. App in dev. The generation is building. You're part of it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">VNG<span>·</span></div>
+      <div class="footer-tagline">VENKY NOVA GENERATION</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:10px;max-width:250px;line-height:1.6;">Building the next generation of games, creators and communities — one project at a time.</div>
+    </div>
+    <div class="footer-links-row">
+      <div class="footer-col">
+        <div class="footer-col-title">NAVIGATE</div>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#updates">Updates</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#vision">Vision</a></li>
+          <li><a href="#community">Community</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">PROJECTS</div>
+        <ul>
+          <li><a href="#projects">Shadow Realm X</a></li>
+          <li><a href="#projects">Nova Strike</a></li>
+          <li><a href="#projects">Hyper Drift</a></li>
+          <li><a href="#projects">VNG App</a></li>
+          <li><a href="#projects">AI Companion</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">CONNECT</div>
+        <ul>
+          <li><a href="#">Discord Server</a></li>
+          <li><a href="#">WhatsApp Channel</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 VENKY NOVA GENERATION · BUILT WITH PASSION · INDIA 🇮🇳</div>
+    <div class="footer-soc">
+      <a href="#" class="fsoc-btn">▶</a>
+      <a href="#" class="fsoc-btn">◈</a>
+      <a href="#" class="fsoc-btn">𝕏</a>
+      <a href="#" class="fsoc-btn">💻</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+// ── Custom cursor
+const cur=document.getElementById('cur'),curdot=document.getElementById('curdot');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;curdot.style.left=mx+'px';curdot.style.top=my+'px';});
+(function tick(){cx+=(mx-cx)*.14;cy+=(my-cy)*.14;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(tick);})();
+document.querySelectorAll('a,button,.qnav-card,.proj-card,.dg-item,.fan-item,.contact-card,.event-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='34px';cur.style.height='34px';cur.style.borderColor='rgba(191,0,255,.8)';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='22px';cur.style.height='22px';cur.style.borderColor='var(--cyan)';});
+});
+
+// ── Particles
+const canvas=document.getElementById('pcanvas'),ctx=canvas.getContext('2d');
+function rsz(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+rsz();window.addEventListener('resize',rsz);
+class P{constructor(){this.r();}r(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.s=Math.random()*1.2+.3;this.a=Math.random()*.3+.05;this.col=Math.random()>.5?'0,245,255':'191,0,255';}u(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.r();}d(){ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fillStyle=`rgba(${this.col},${this.a})`;ctx.fill();}}
+const ps=[];for(let i=0;i<100;i++)ps.push(new P());
+function drawConn(){for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,245,255,${.03*(1-d/90)})`;ctx.lineWidth=.4;ctx.stroke();}}}
+(function anim(){ctx.clearRect(0,0,canvas.width,canvas.height);ps.forEach(p=>{p.u();p.d();});drawConn();requestAnimationFrame(anim);})();
+
+// ── Navbar active + scroll
+const nav=document.getElementById('navbar');
+const secs=['home','updates','projects','vision','community','about'];
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>40);
+  const sp=window.scrollY+100;
+  secs.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const top=el.offsetTop,bot=top+el.offsetHeight;
+    const a=document.querySelector(`.nav-links a[href="#${id}"]`);
+    if(a)a.classList.toggle('active',sp>=top&&sp<bot);
+  });
+});
+
+// ── Scroll reveal
+const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+// ── Counter animation
+function animCount(el,target,suffix,isFloat){
+  const dur=1800,start=performance.now();
+  (function frame(now){
+    const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+    const v=e*target;
+    el.textContent=(isFloat?v.toFixed(1):(v>=1000?Math.floor(v).toLocaleString():Math.floor(v)))+suffix;
+    if(p<1)requestAnimationFrame(frame);
+  })(start);
+}
+const cntObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target,v=parseFloat(el.dataset.val);animCount(el,v,v>=1000?'+':'',false);cntObs.unobserve(el);}});},{threshold:.5});
+document.querySelectorAll('.cnt').forEach(el=>cntObs.observe(el));
+
+// ── Skills animate
+const skillObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.skill-fill').forEach(bar=>{const w=bar.dataset.w;bar.style.width='0';setTimeout(()=>{bar.style.width=w+'%';},100);});skillObs.unobserve(e.target);}});},{threshold:.3});
+document.querySelectorAll('.skills-section').forEach(el=>skillObs.observe(el));
+
+// ── Project filter
+function filterProj(btn,cat){
+  document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.proj-card').forEach(c=>{
+    const match=cat==='all'||c.dataset.cat===cat;
+    c.style.display=match?'':'none';
+  });
+}
+
+// ── Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navlinks').classList.remove('open')));
+</script>
+</body>
+</html>
