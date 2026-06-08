@@ -24,22 +24,13 @@ img{max-width:100%;}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:none;}
 
-/* ── LOADER ── */
-#vng-loader{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:var(--bg);z-index:99999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
-  transition:opacity .7s ease, visibility .7s ease;
-}
-#vng-loader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-.loader-logo{animation:loaderPulse 1.2s ease-in-out infinite;}
-.loader-bar-wrap{width:180px;height:2px;background:rgba(0,245,255,.12);margin-top:32px;overflow:hidden;}
-.loader-bar{height:100%;width:0%;background:linear-gradient(to right,var(--cyan),var(--purple));animation:loaderFill 1.8s ease forwards;}
-.loader-text{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:5px;color:rgba(0,245,255,.4);margin-top:14px;animation:loaderBlink 1.2s ease-in-out infinite;}
-@keyframes loaderPulse{0%,100%{filter:drop-shadow(0 0 12px rgba(0,245,255,.5))}50%{filter:drop-shadow(0 0 35px rgba(0,245,255,.9));}}
-@keyframes loaderFill{0%{width:0%}60%{width:80%}100%{width:100%}}
-@keyframes loaderBlink{0%,100%{opacity:.4}50%{opacity:1}}
+/* ── PAGE SECTIONS ── */
+.pg-section{display:none;min-height:calc(100vh - var(--nav-h));}
+.pg-section.pg-active{display:block;}
+nav{background:rgba(3,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-links a.active,.nav-links a:hover{color:var(--cyan);border-color:rgba(0,245,255,.2);background:rgba(0,245,255,.04);}
 
+/* CURSOR */
 #cur,#curdot{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%);}
 #cur{width:22px;height:22px;border:1.5px solid var(--cyan);transition:width .2s,height .2s,border-color .2s;}
 #curdot{width:4px;height:4px;background:var(--cyan);}
@@ -56,7 +47,7 @@ nav{
   padding:0 50px;z-index:1000;
   transition:background .3s,border .3s;
 }
-nav.scrolled{background:rgba(3,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+
 .logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 20px rgba(var(--c),.5);}
 .logo span{color:var(--purple);}
 .logo sub{font-size:9px;letter-spacing:2px;color:var(--t2);vertical-align:sub;margin-left:4px;font-family:'Share Tech Mono',monospace;}
@@ -307,6 +298,97 @@ section{position:relative;z-index:1;padding:100px 60px;}
 ═══════════════════════════════════ */
 #community{background:var(--card);}
 .comm-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
+/* Gaming Community Card */
+.gaming-comm-card{background:rgba(0,245,255,.03);border:1px solid rgba(0,245,255,.2);padding:32px;margin-top:16px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s;}
+.gaming-comm-card:hover{border-color:rgba(0,245,255,.45);transform:translateY(-3px);}
+.gaming-comm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));background-size:200%;animation:shimmer 3s linear infinite;}
+.gaming-comm-card::after{content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;background:radial-gradient(circle,rgba(0,245,255,.04) 0%,transparent 60%);pointer-events:none;}
+.gc-layout{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;margin-bottom:22px;}
+.gc-icon-title{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.gc-icon{font-size:32px;}
+.gc-title{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);}
+.gc-desc{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:0;}
+.gc-stats{display:flex;gap:12px;flex-shrink:0;}
+.gc-stat{text-align:center;padding:12px 18px;border:1px solid rgba(0,245,255,.15);background:rgba(0,245,255,.04);}
+.gc-stat-n{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--cyan);text-shadow:0 0 14px rgba(0,245,255,.5);}
+.gc-stat-l{font-size:8px;letter-spacing:2px;color:var(--t3);margin-top:4px;}
+.gc-platforms{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
+.plat-chip{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1.5px;
+  padding:8px 14px;border:1px solid;
+  transition:all .25s ease;
+  cursor:none;text-decoration:none;
+  color:#ffffff;font-weight:700;
+  position:relative;overflow:hidden;
+}
+.plat-chip:hover{transform:translateY(-2px);filter:brightness(1.15);}
+
+/* YouTube — Strong Red */
+.plat-chip.pc-yt{
+  background:rgba(220,30,30,.82);
+  border-color:rgba(255,80,80,.9);
+  color:#fff;
+}
+
+/* Instagram — Vibrant Pink-Purple */
+.plat-chip.pc-ig{
+  background:linear-gradient(135deg,rgba(195,42,163,.82),rgba(253,87,42,.75));
+  border-color:rgba(240,80,180,.9);
+  color:#fff;
+}
+
+/* WhatsApp — Vivid Green */
+.plat-chip.pc-wa{
+  background:rgba(18,183,80,.82);
+  border-color:rgba(37,211,102,.9);
+  color:#fff;
+}
+
+/* Facebook — Bright Blue */
+.plat-chip.pc-fb{
+  background:rgba(24,100,235,.82);
+  border-color:rgba(80,150,255,.9);
+  color:#fff;
+}
+
+/* Threads — Bright White/Silver */
+.plat-chip.pc-th{
+  background:rgba(160,160,180,.75);
+  border-color:rgba(220,220,240,.9);
+  color:#fff;
+}
+
+/* X — Bright Silver-Gray */
+.plat-chip.pc-x{
+  background:rgba(100,110,130,.80);
+  border-color:rgba(180,190,210,.9);
+  color:#fff;
+}
+
+/* Pinterest — Rich Red */
+.plat-chip.pc-pi{
+  background:rgba(210,0,35,.82);
+  border-color:rgba(255,50,80,.9);
+  color:#fff;
+}
+
+/* Website — Bright Cyan */
+.plat-chip.pc-web{
+  background:rgba(0,190,210,.80);
+  border-color:rgba(0,245,255,.95);
+  color:#fff;
+}
+
+/* Website — Bright Cyan */
+.plat-chip.pc-web{
+  background:rgba(0,190,210,.80);
+  border-color:rgba(0,245,255,.95);
+  color:#fff;
+}
+.btn-gc{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:14px 36px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:none;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);}
+.btn-gc:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(0,245,255,.5);}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
 
 .discord-card{
   background:linear-gradient(135deg,#1a1040 0%,#0a0618 100%);
@@ -477,33 +559,120 @@ footer{
   nav{padding:0 20px;}
   footer{padding:40px 24px 24px;}
 }
+
+/* ═══════════════════════════════════════
+   AUTH SYSTEM — FIREBASE
+═══════════════════════════════════════ */
+/* Nav auth control */
+.nav-auth-wrap{display:flex;align-items:center;gap:10px;}
+.nav-login-btn{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:9px 18px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.nav-login-btn:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(0,245,255,.4);}
+.nav-user-wrap{position:relative;display:none;}
+.nav-user-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border:1px solid var(--line);transition:all .2s;background:transparent;}
+.nav-user-trigger:hover{border-color:rgba(0,245,255,.35);background:rgba(0,245,255,.04);}
+.nav-av{width:28px;height:28px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;color:#000;overflow:hidden;flex-shrink:0;}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+.nav-uname{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;color:var(--cyan);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-chevron{font-size:8px;color:var(--t3);transition:transform .2s;}
+.nav-chevron.open{transform:rotate(180deg);}
+.nav-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:rgba(3,5,8,.97);border:1px solid rgba(0,245,255,.18);backdrop-filter:blur(20px);min-width:170px;z-index:3000;display:none;}
+.nav-dropdown.open{display:block;}
+.nav-dropdown a{display:flex;align-items:center;gap:10px;padding:12px 16px;font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;color:var(--t2);transition:all .2s;cursor:pointer;text-decoration:none;border-bottom:1px solid rgba(0,245,255,.05);}
+.nav-dropdown a:last-child{border-bottom:none;color:#ff6b8a;}
+.nav-dropdown a:hover{color:var(--cyan);background:rgba(0,245,255,.04);padding-left:20px;}
+.nav-dropdown a:last-child:hover{color:#ff4444;background:rgba(255,0,60,.05);}
+
+/* Auth card pages */
+.auth-page{min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden;}
+.auth-bg-orb1{position:absolute;width:450px;height:450px;border-radius:50%;background:rgba(0,245,255,.06);filter:blur(90px);top:-15%;left:-10%;pointer-events:none;}
+.auth-bg-orb2{position:absolute;width:350px;height:350px;border-radius:50%;background:rgba(191,0,255,.06);filter:blur(80px);bottom:-10%;right:-5%;pointer-events:none;}
+.auth-card{background:var(--card);border:1px solid rgba(0,245,255,.15);padding:48px;width:100%;max-width:460px;position:relative;overflow:hidden;}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));}
+.auth-logo-txt{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;letter-spacing:5px;margin-bottom:6px;}
+.auth-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:6px;}
+.auth-sub{font-size:12px;color:var(--t3);text-align:center;letter-spacing:1px;margin-bottom:28px;line-height:1.5;}
+.auth-field{margin-bottom:18px;position:relative;}
+.auth-label{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:3px;color:var(--t3);margin-bottom:7px;display:block;}
+.auth-input{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.18);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;padding:12px 16px;outline:none;transition:border-color .3s,box-shadow .3s;letter-spacing:.5px;}
+.auth-input:focus{border-color:rgba(0,245,255,.55);box-shadow:0 0 16px rgba(0,245,255,.08);}
+.auth-input::placeholder{color:var(--t3);opacity:.5;}
+.auth-btn{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:15px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:6px;}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,255,.4);}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.auth-btn-s{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:13px;background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:8px;}
+.auth-btn-s:hover{border-color:var(--purple);color:var(--purple);}
+.auth-msg{padding:11px 14px;margin-bottom:18px;font-size:11px;letter-spacing:1px;font-family:'Share Tech Mono',monospace;line-height:1.5;display:none;}
+.auth-msg.error{background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;display:block;}
+.auth-msg.success{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:#00ff88;display:block;}
+.auth-links{display:flex;justify-content:space-between;margin-top:18px;flex-wrap:wrap;gap:6px;}
+.auth-links a{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:1.5px;color:var(--t3);cursor:pointer;transition:color .2s;text-decoration:none;}
+.auth-links a:hover{color:var(--cyan);}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.auth-divider span{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(0,245,255,.08);}
+.eye-toggle{position:absolute;right:12px;top:38px;cursor:pointer;color:var(--t3);font-size:14px;user-select:none;transition:color .2s;}
+.eye-toggle:hover{color:var(--cyan);}
+.strength-wrap{margin-top:6px;}
+.strength-bar{height:2px;background:rgba(0,245,255,.1);overflow:hidden;}
+.strength-fill{height:100%;width:0%;transition:width .3s,background .3s;}
+.strength-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;margin-top:4px;}
+
+/* Profile page */
+.profile-pg{max-width:860px;margin:0 auto;padding:50px 60px;}
+.profile-hero-card{background:var(--card);border:1px solid rgba(0,245,255,.12);padding:36px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;position:relative;overflow:hidden;margin-bottom:14px;}
+.profile-hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));}
+.av-container{position:relative;width:88px;height:88px;flex-shrink:0;}
+.av-hex{width:88px;height:88px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#000;overflow:hidden;}
+.av-hex img{width:100%;height:100%;object-fit:cover;}
+.av-edit{position:absolute;bottom:-2px;right:-4px;width:24px;height:24px;background:var(--purple);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:transform .2s;}
+.av-edit:hover{transform:scale(1.2);}
+#av-file{display:none;}
+.av-uploading{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;font-size:11px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);}
+.prof-name{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;color:var(--cyan);margin-bottom:4px;}
+.prof-email{font-size:12px;color:var(--t3);letter-spacing:1px;margin-bottom:6px;}
+.prof-since{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:2px;}
+.prof-badge{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;padding:3px 10px;border:1px solid rgba(0,245,255,.3);color:var(--cyan);display:inline-block;margin-top:8px;}
+.prof-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.prof-actions button{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:9px 16px;cursor:pointer;transition:all .25s;white-space:nowrap;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.btn-edit-prof{background:transparent;border:1px solid rgba(0,245,255,.3);color:var(--cyan);}
+.btn-edit-prof:hover{background:rgba(0,245,255,.07);}
+.btn-logout-prof{background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;}
+.btn-logout-prof:hover{background:rgba(255,0,60,.15);}
+.prof-section{background:var(--card);border:1px solid rgba(0,245,255,.1);padding:26px;margin-bottom:14px;}
+.prof-sec-h{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--cyan);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(0,245,255,.08);}
+.prof-bio-txt{font-size:14px;color:var(--t2);line-height:1.75;}
+.prof-bio-txt.empty{color:var(--t3);font-style:italic;}
+.prof-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pstt{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.08);padding:16px;text-align:center;}
+.pstt-n{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);}
+.pstt-l{font-size:8px;letter-spacing:2px;color:var(--t3);margin-top:4px;}
+/* Inline edit form */
+.edit-form-wrap{display:none;margin-top:16px;}
+.edit-form-wrap.open{display:block;}
+.ef-field{margin-bottom:15px;}
+.ef-label{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:3px;color:var(--t3);margin-bottom:7px;display:block;}
+.ef-input,.ef-textarea{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .3s;resize:vertical;letter-spacing:.3px;}
+.ef-input:focus,.ef-textarea:focus{border-color:rgba(0,245,255,.5);box-shadow:0 0 10px rgba(0,245,255,.07);}
+.ef-actions{display:flex;gap:10px;margin-top:14px;}
+.btn-save{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+.btn-save:hover{box-shadow:0 0 18px rgba(0,245,255,.3);}
+.btn-cancel-edit{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:transparent;color:var(--t2);border:1px solid rgba(255,255,255,.1);cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+.btn-cancel-edit:hover{border-color:rgba(255,255,255,.3);}
+.save-msg{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#00ff88;margin-left:10px;opacity:0;transition:opacity .3s;}
+.save-msg.show{opacity:1;}
+
+@media(max-width:700px){
+  .auth-card{padding:30px 22px;}
+  .profile-hero-card{grid-template-columns:1fr;text-align:center;gap:20px;}
+  .prof-actions{flex-direction:row;justify-content:center;align-items:center;}
+  .av-container{margin:0 auto;}
+  .profile-pg{padding:30px 20px;}
+  .prof-stats-row{grid-template-columns:1fr 1fr;}
+  .nav-uname{display:none;}
+}
 </style>
 </head>
 <body>
-
-<!-- ══ LOADER ══ -->
-<div id="vng-loader">
-  <svg class="loader-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="150" height="150">
-    <defs>
-      <linearGradient id="lgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#00f5ff"/>
-        <stop offset="100%" stop-color="#bf00ff"/>
-      </linearGradient>
-    </defs>
-    <polygon points="140,12 252,76 252,204 140,268 28,204 28,76" fill="none" stroke="rgba(0,245,255,0.5)" stroke-width="1.5"/>
-    <polygon points="140,48 214,92 214,180 140,224 66,180 66,92" fill="none" stroke="rgba(191,0,255,0.25)" stroke-width="0.8"/>
-    <circle cx="140" cy="12" r="3" fill="#00f5ff"/>
-    <circle cx="252" cy="76" r="3" fill="#00f5ff"/>
-    <circle cx="252" cy="204" r="3" fill="#00f5ff"/>
-    <circle cx="140" cy="268" r="3" fill="#00f5ff"/>
-    <circle cx="28" cy="204" r="3" fill="#00f5ff"/>
-    <circle cx="28" cy="76" r="3" fill="#00f5ff"/>
-    <text x="140" y="158" font-family="Orbitron,sans-serif" font-size="54" font-weight="900" fill="url(#lgGrad)" text-anchor="middle" dominant-baseline="middle">VNG</text>
-    <text x="140" y="188" font-family="Rajdhani,sans-serif" font-size="10" fill="rgba(0,245,255,0.4)" text-anchor="middle" letter-spacing="5">VENKY NOVA</text>
-  </svg>
-  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
-  <div class="loader-text">LOADING...</div>
-</div>
 
 <div id="cur"></div>
 <div id="curdot"></div>
@@ -515,15 +684,29 @@ footer{
 <nav id="navbar">
   <a href="#home" class="logo">VNG<span>·</span><sub>NOVA</sub></a>
   <ul class="nav-links" id="navlinks">
-    <li><a href="#home" class="nav-icon">🏠</a></li>
-    <li><a href="#updates">📢 UPDATES</a></li>
-    <li><a href="#projects">🎮 PROJECTS</a></li>
-    <li><a href="#vision">🚀 VISION</a></li>
-    <li><a href="#community">🌐 COMMUNITY</a></li>
-    <li><a href="#about">👨‍💻 ABOUT</a></li>
+    <li><a data-page="home" onclick="showPg('home')">🏠 HOME</a></li>
+    <li><a data-page="updates" onclick="showPg('updates')">📢 UPDATES</a></li>
+    <li><a data-page="projects" onclick="showPg('projects')">🎮 PROJECTS</a></li>
+    <li><a data-page="vision" onclick="showPg('vision')">🚀 VISION</a></li>
+    <li><a data-page="community" onclick="showPg('community')">🌐 COMMUNITY</a></li>
+    <li><a data-page="about" onclick="showPg('about')">👨‍💻 ABOUT</a></li>
   </ul>
-  <button class="nav-cta" onclick="document.querySelector('#community').scrollIntoView({behavior:'smooth'})">JOIN VNG</button>
-  <div class="hamburger" id="hamburger" onclick="document.getElementById('navlinks').classList.toggle('open')">
+  <div class="nav-auth-wrap">
+    <button id="btn-nav-login" class="nav-login-btn" onclick="showPg('login')">⚡ LOGIN</button>
+    <div class="nav-user-wrap" id="nav-user-wrap">
+      <div class="nav-user-trigger" onclick="toggleNavMenu()">
+        <div class="nav-av" id="nav-av-icon"><span id="nav-av-letter">V</span></div>
+        <span class="nav-uname" id="nav-uname-txt">USER</span>
+        <span class="nav-chevron" id="nav-chevron">▾</span>
+      </div>
+      <div class="nav-dropdown" id="nav-dropdown">
+        <a onclick="showPg('profile');closeNavMenu()">👤 MY PROFILE</a>
+        <a onclick="closeNavMenu();showPg('home')">🏠 HOME</a>
+        <a onclick="vngLogout()">🚪 LOGOUT</a>
+      </div>
+    </div>
+  </div>
+  <div class="hamburger" id="hamburger">
     <span></span><span></span><span></span>
   </div>
 </nav>
@@ -531,6 +714,7 @@ footer{
 <!-- ══════════════════════════════════════════
      1. HOME
 ══════════════════════════════════════════ -->
+<div id="pg-home" class="pg-section pg-active">
 <section id="home">
   <div class="home-orb orb-a"></div>
   <div class="home-orb orb-b"></div>
@@ -558,8 +742,8 @@ footer{
     </div>
     <div style="font-size:14px;color:var(--t2);letter-spacing:3px;margin-top:12px;font-weight:300;">ONE PROJECT AT A TIME</div>
     <div style="display:flex;gap:16px;justify-content:center;margin-top:36px;flex-wrap:wrap;">
-      <button class="btn-p" onclick="document.querySelector('#projects').scrollIntoView({behavior:'smooth'})">VIEW PROJECTS</button>
-      <button class="btn-s" onclick="document.querySelector('#vision').scrollIntoView({behavior:'smooth'})">OUR VISION</button>
+      <button class="btn-p" onclick="showPg('projects')">VIEW PROJECTS</button>
+      <button class="btn-s" onclick="showPg('vision')">OUR VISION</button>
     </div>
     <div style="display:flex;gap:30px;justify-content:center;margin-top:40px;flex-wrap:wrap;">
       <div style="text-align:center;">
@@ -578,7 +762,7 @@ footer{
       </div>
       <div style="width:1px;background:var(--border);"></div>
       <div style="text-align:center;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);" class="cnt" data-val="98">0</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,245,255,.4);" class="cnt" data-val="100">0</div>
         <div style="font-size:10px;letter-spacing:3px;color:var(--t3);margin-top:3px;">% PASSION</div>
       </div>
     </div>
@@ -590,37 +774,37 @@ footer{
   <div class="sec-eyebrow reveal">EXPLORE VNG</div>
   <h2 class="sec-title reveal d1">WHAT'S <span style="color:var(--cyan)">INSIDE</span></h2>
   <div class="qnav-grid">
-    <a href="#updates" class="qnav-card reveal d1">
+    <div class="qnav-card reveal d1" onclick="showPg('updates')">
       <span class="qnav-icon">📢</span>
       <div class="qnav-name">UPDATES</div>
       <div class="qnav-desc">Latest news, changelogs, YouTube drops and project progress</div>
       <span class="qnav-arrow">→</span>
-    </a>
-    <a href="#projects" class="qnav-card reveal d2">
+    </div>
+    <div class="qnav-card reveal d2" onclick="showPg('projects')">
       <span class="qnav-icon">🎮</span>
       <div class="qnav-name">PROJECTS</div>
       <div class="qnav-desc">Games, websites, apps and experimental builds from VNG</div>
       <span class="qnav-arrow">→</span>
-    </a>
-    <a href="#vision" class="qnav-card reveal d3">
+    </div>
+    <div class="qnav-card reveal d3" onclick="showPg('vision')">
       <span class="qnav-icon">🚀</span>
       <div class="qnav-name">VISION</div>
       <div class="qnav-desc">The Nova Generation roadmap, goals and dream projects</div>
       <span class="qnav-arrow">→</span>
-    </a>
-    <a href="#community" class="qnav-card reveal d1">
+    </div>
+    <div class="qnav-card reveal d1" onclick="showPg('community')">
       <span class="qnav-icon">🌐</span>
       <div class="qnav-name">COMMUNITY</div>
       <div class="qnav-desc">Discord, WhatsApp, events, challenges and fan creations</div>
       <span class="qnav-arrow">→</span>
-    </a>
-    <a href="#about" class="qnav-card reveal d2">
+    </div>
+    <div class="qnav-card reveal d2" onclick="showPg('about')">
       <span class="qnav-icon">👨‍💻</span>
       <div class="qnav-name">ABOUT VENKY</div>
       <div class="qnav-desc">The founder's story, skills, journey and contact links</div>
       <span class="qnav-arrow">→</span>
-    </a>
-    <div class="qnav-card reveal d3" style="background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(191,0,255,.05));cursor:none;" onclick="document.querySelector('#community').scrollIntoView({behavior:'smooth'})">
+    </div>
+    <div class="qnav-card reveal d3" style="background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(191,0,255,.05));cursor:none;" onclick="showPg('community')">
       <span class="qnav-icon">⚡</span>
       <div class="qnav-name">JOIN NOW</div>
       <div class="qnav-desc">Become part of the Venky Nova Generation today — free forever</div>
@@ -630,10 +814,12 @@ footer{
 </div>
 
 <div class="sec-divider"></div>
+</div><!-- /pg-home -->
 
 <!-- ══════════════════════════════════════════
      2. UPDATES
 ══════════════════════════════════════════ -->
+<div id="pg-updates" class="pg-section">
 <section id="updates">
   <div class="sec-eyebrow reveal">WHAT'S NEW</div>
   <h2 class="sec-title reveal d1">UPDATES <span style="color:var(--cyan)">&amp; CHANGELOG</span></h2>
@@ -724,7 +910,7 @@ footer{
 
       <div class="sidebar-card reveal d2">
         <div class="sidebar-title">🌐 COMMUNITY STATS</div>
-        <div class="sidebar-row"><span class="sidebar-label">Discord Members</span><span class="sidebar-val">2,418</span></div>
+        <div class="sidebar-row"><span class="sidebar-label1:440104586580:web:5a6ebfb60a322e5b038cc1">Discord Members</span><span class="sidebar-val">2,418</span></div>
         <div class="sidebar-row"><span class="sidebar-label">Online Now</span><span class="sidebar-val" style="color:#00ff88;">● 347</span></div>
         <div class="sidebar-row"><span class="sidebar-label">WhatsApp Channel</span><span class="sidebar-val">1,100+</span></div>
         <div class="sidebar-row"><span class="sidebar-label">Countries</span><span class="sidebar-val">34</span></div>
@@ -740,12 +926,12 @@ footer{
     </div>
   </div>
 </section>
-
-<div class="sec-divider"></div>
+</div><!-- /pg-updates -->
 
 <!-- ══════════════════════════════════════════
      3. PROJECTS
 ══════════════════════════════════════════ -->
+<div id="pg-projects" class="pg-section">
 <section id="projects">
   <div class="sec-eyebrow reveal">WHAT WE BUILD</div>
   <h2 class="sec-title reveal d1">VNG <span style="color:var(--cyan)">PROJECTS</span></h2>
@@ -832,12 +1018,12 @@ footer{
     </div>
   </div>
 </section>
-
-<div class="sec-divider"></div>
+</div><!-- /pg-projects -->
 
 <!-- ══════════════════════════════════════════
      4. VISION
 ══════════════════════════════════════════ -->
+<div id="pg-vision" class="pg-section">
 <section id="vision">
   <div class="sec-eyebrow reveal">THE BIG PICTURE</div>
   <h2 class="sec-title reveal d1">NOVA <span style="color:var(--purple)">GENERATION VISION</span></h2>
@@ -985,12 +1171,12 @@ footer{
     </div>
   </div>
 </section>
-
-<div class="sec-divider"></div>
+</div><!-- /pg-vision -->
 
 <!-- ══════════════════════════════════════════
      5. COMMUNITY
 ══════════════════════════════════════════ -->
+<div id="pg-community" class="pg-section">
 <section id="community">
   <div class="sec-eyebrow reveal">TOGETHER WE NOVA</div>
   <h2 class="sec-title reveal d1">VNG <span style="color:var(--cyan)">COMMUNITY</span></h2>
@@ -1111,13 +1297,54 @@ footer{
       </div>
     </div>
   </div>
-</section>
 
-<div class="sec-divider"></div>
+  <!-- ── GAMING COMMUNITY CARD ── -->
+  <div class="gaming-comm-card reveal">
+    <div class="gc-layout">
+      <div>
+        <div class="gc-icon-title">
+          <span class="gc-icon">🎮</span>
+          <div class="gc-title">GAMING COMMUNITY</div>
+        </div>
+        <div class="gc-desc">Welcome to the Venky Nova Gaming ecosystem. Connect with the gaming community, follow updates, and explore all official VNG platforms in one place. Join us across every corner of the internet.</div>
+      </div>
+      <div class="gc-stats">
+        <div class="gc-stat">
+          <div class="gc-stat-n">202+</div>
+          <div class="gc-stat-l">SUBSCRIBERS</div>
+        </div>
+        <div class="gc-stat">
+          <div class="gc-stat-n">84+</div>
+          <div class="gc-stat-l">VIDEOS</div>
+        </div>
+        <div class="gc-stat">
+          <div class="gc-stat-n">8+</div>
+          <div class="gc-stat-l">PLATFORMS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gc-platforms">
+      <a class="plat-chip pc-yt" href="https://youtube.com/@venkynovagaming" target="_blank">▶ YOUTUBE</a>
+      <a class="plat-chip pc-ig" href="https://instagram.com/venkynovagaming" target="_blank">📸 INSTAGRAM</a>
+      <a class="plat-chip pc-wa" href="https://whatsapp.com/channel/0029VawAB0UI7BeHrJfvtR27" target="_blank">💬 WHATSAPP CHANNEL</a>
+      <a class="plat-chip pc-fb" href="https://www.facebook.com/share/1Dg4QD7wKh/" target="_blank">📘 FACEBOOK</a>
+      <a class="plat-chip pc-th" href="https://threads.net/@venkynovagaming" target="_blank">🧵 THREADS</a>
+      <a class="plat-chip pc-x" href="https://x.com/venkynovagaming" target="_blank">✕ X (TWITTER)</a>
+      <a class="plat-chip pc-pi" href="https://pin.it/venkynovagaming" target="_blank">📌 PINTEREST</a>
+      <a class="plat-chip pc-web" href="https://dev-venkynovayt.pantheonsite.io" target="_blank">🌐 VNG WEBSITE</a>
+    </div>
+
+    <button class="btn-gc" onclick="showPg('community')">JOIN GAMING COMMUNITY</button>
+  </div>
+
+</section>
+</div><!-- /pg-community -->
 
 <!-- ══════════════════════════════════════════
      6. ABOUT
 ══════════════════════════════════════════ -->
+<div id="pg-about" class="pg-section">
 <section id="about">
   <div class="sec-eyebrow reveal">THE FOUNDER</div>
   <h2 class="sec-title reveal d1">ABOUT <span style="color:var(--cyan)">VENKY</span></h2>
@@ -1136,10 +1363,10 @@ footer{
           I believe anyone can build something meaningful if they start, stay consistent, and share the journey.
         </div>
         <div class="profile-socials">
-          <a href="#" class="soc-btn">▶ YOUTUBE</a>
-          <a href="#" class="soc-btn">◈ INSTAGRAM</a>
-          <a href="#" class="soc-btn">𝕏 TWITTER</a>
-          <a href="#" class="soc-btn">💻 GITHUB</a>
+          <a href="https://youtube.com/@venkynovagaming" target="_blank" class="soc-btn">▶ YOUTUBE</a>
+          <a href="https://instagram.com/venkynovagaming" target="_blank" class="soc-btn">◈ INSTAGRAM</a>
+          <a href="https://x.com/venkynovagaming" target="_blank" class="soc-btn">𝕏 TWITTER</a>
+          <a href="https://github.com/venkynova" target="_blank" class="soc-btn">💻 GITHUB</a>
         </div>
       </div>
 
@@ -1274,9 +1501,7 @@ footer{
     </div>
   </div>
 </section>
-
 <div class="sec-divider"></div>
-
 <!-- ═══ FOOTER ═══ -->
 <footer>
   <div class="footer-top">
@@ -1289,32 +1514,32 @@ footer{
       <div class="footer-col">
         <div class="footer-col-title">NAVIGATE</div>
         <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#updates">Updates</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#vision">Vision</a></li>
-          <li><a href="#community">Community</a></li>
-          <li><a href="#about">About</a></li>
+          <li><a onclick="showPg('home')">Home</a></li>
+          <li><a onclick="showPg('updates')">Updates</a></li>
+          <li><a onclick="showPg('projects')">Projects</a></li>
+          <li><a onclick="showPg('vision')">Vision</a></li>
+          <li><a onclick="showPg('community')">Community</a></li>
+          <li><a onclick="showPg('about')">About</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">PROJECTS</div>
         <ul>
-          <li><a href="#projects">Shadow Realm X</a></li>
-          <li><a href="#projects">Nova Strike</a></li>
-          <li><a href="#projects">Hyper Drift</a></li>
-          <li><a href="#projects">VNG App</a></li>
-          <li><a href="#projects">AI Companion</a></li>
+          <li><a onclick="showPg('projects')">Shadow Realm X</a></li>
+          <li><a onclick="showPg('projects')">Nova Strike</a></li>
+          <li><a onclick="showPg('projects')">Hyper Drift</a></li>
+          <li><a onclick="showPg('projects')">VNG App</a></li>
+          <li><a onclick="showPg('projects')">AI Companion</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">CONNECT</div>
         <ul>
-          <li><a href="#">Discord Server</a></li>
+          <li><a href="#" onclick="alert('Discord coming soon!')">Discord Server</a></li>
           <li><a href="https://whatsapp.com/channel/0029VawAB0UI7BeHrJfvtR27" target="_blank">WhatsApp Channel</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">GitHub</a></li>
+          <li><a href="https://youtube.com/@venkynovagaming" target="_blank">YouTube</a></li>
+          <li><a href="https://instagram.com/venkynovagaming" target="_blank">Instagram</a></li>
+          <li><a href="https://github.com/venkynova" target="_blank">GitHub</a></li>
         </ul>
       </div>
     </div>
@@ -1322,24 +1547,184 @@ footer{
   <div class="footer-bottom">
     <div class="footer-copy">© 2026 VENKY NOVA GENERATION · BUILT WITH PASSION · INDIA 🇮🇳</div>
     <div class="footer-soc">
-      <a href="#" class="fsoc-btn">▶</a>
-      <a href="#" class="fsoc-btn">◈</a>
-      <a href="#" class="fsoc-btn">𝕏</a>
-      <a href="#" class="fsoc-btn">💻</a>
+      <a href="https://youtube.com/@venkynovagaming" target="_blank" class="fsoc-btn">▶</a>
+      <a href="https://instagram.com/venkynovagaming" target="_blank" class="fsoc-btn">◈</a>
+      <a href="https://x.com/venkynovagaming" target="_blank" class="fsoc-btn">𝕏</a>
+      <a href="https://github.com/venkynova" target="_blank" class="fsoc-btn">💻</a>
     </div>
   </div>
 </footer>
+</div><!-- /pg-about -->
+
+<!-- ═══════════════════════════════════════════════
+     PAGE: LOGIN
+═══════════════════════════════════════════════ -->
+<div id="pg-login" class="page">
+  <div class="auth-page">
+    <div class="auth-bg-orb1"></div>
+    <div class="auth-bg-orb2"></div>
+    <div class="auth-card">
+      <div class="auth-logo-txt">VNG</div>
+      <h2 class="auth-title">WELCOME BACK</h2>
+      <p class="auth-sub">Sign in to your Nova Generation account</p>
+      <div class="auth-msg" id="login-msg"></div>
+      <div class="auth-field">
+        <label class="auth-label">EMAIL ADDRESS</label>
+        <input type="email" id="login-email" class="auth-input" placeholder="your@email.com">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">PASSWORD</label>
+        <input type="password" id="login-password" class="auth-input" placeholder="••••••••">
+        <span class="eye-toggle" onclick="toggleEye('login-password',this)">👁</span>
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="vngLogin()">ENTER THE PORTAL</button>
+      <div class="auth-links">
+        <a onclick="showPg('forgot')">Forgot Password?</a>
+        <a onclick="showPg('register')">Create Account →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE: REGISTER
+═══════════════════════════════════════════════ -->
+<div id="pg-register" class="page">
+  <div class="auth-page">
+    <div class="auth-bg-orb1"></div>
+    <div class="auth-bg-orb2"></div>
+    <div class="auth-card">
+      <div class="auth-logo-txt">VNG</div>
+      <h2 class="auth-title">JOIN THE GENERATION</h2>
+      <p class="auth-sub">Create your Venky Nova Generation account</p>
+      <div class="auth-msg" id="register-msg"></div>
+      <div class="auth-field">
+        <label class="auth-label">USERNAME</label>
+        <input type="text" id="reg-username" class="auth-input" placeholder="YourGamerTag" maxlength="20">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">EMAIL ADDRESS</label>
+        <input type="email" id="reg-email" class="auth-input" placeholder="your@email.com">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">PASSWORD</label>
+        <input type="password" id="reg-password" class="auth-input" placeholder="Min. 6 characters" oninput="checkStrength(this.value)">
+        <span class="eye-toggle" onclick="toggleEye('reg-password',this)">👁</span>
+        <div class="strength-wrap">
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-label" id="strength-label" style="color:var(--t3)"></div>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">CONFIRM PASSWORD</label>
+        <input type="password" id="reg-confirm" class="auth-input" placeholder="Repeat password">
+        <span class="eye-toggle" onclick="toggleEye('reg-confirm',this)">👁</span>
+      </div>
+      <button class="auth-btn" id="register-btn" onclick="vngRegister()">CREATE ACCOUNT</button>
+      <div class="auth-links">
+        <a onclick="showPg('login')">← Back to Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE: FORGOT PASSWORD
+═══════════════════════════════════════════════ -->
+<div id="pg-forgot" class="page">
+  <div class="auth-page">
+    <div class="auth-bg-orb1"></div>
+    <div class="auth-bg-orb2"></div>
+    <div class="auth-card">
+      <div class="auth-logo-txt">VNG</div>
+      <h2 class="auth-title">RESET PASSWORD</h2>
+      <p class="auth-sub">Enter your email and we'll send a reset link to your inbox.</p>
+      <div class="auth-msg" id="forgot-msg"></div>
+      <div class="auth-field">
+        <label class="auth-label">EMAIL ADDRESS</label>
+        <input type="email" id="forgot-email" class="auth-input" placeholder="your@email.com">
+      </div>
+      <button class="auth-btn" id="forgot-btn" onclick="vngForgot()">SEND RESET LINK</button>
+      <div class="auth-links">
+        <a onclick="showPg('login')">← Back to Login</a>
+        <a onclick="showPg('register')">Create Account</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE: USER PROFILE
+═══════════════════════════════════════════════ -->
+<div id="pg-profile" class="page">
+  <div class="profile-pg">
+
+    <!-- Profile Hero -->
+    <div class="profile-hero-card">
+      <div class="av-container">
+        <div class="av-hex" id="prof-av-hex">
+          <span id="prof-av-letter">V</span>
+        </div>
+        <button class="av-edit" onclick="document.getElementById('av-file').click()" title="Change Photo">✏</button>
+        <input type="file" id="av-file" accept="image/*" onchange="uploadAvatar(this.files[0])">
+        <div class="av-uploading" id="av-uploading">⟳</div>
+      </div>
+      <div>
+        <div class="prof-name" id="prof-name-display">USERNAME</div>
+        <div class="prof-email" id="prof-email-display">user@email.com</div>
+        <div class="prof-since" id="prof-since-display">MEMBER SINCE —</div>
+        <div class="prof-badge">⚡ VNG MEMBER</div>
+      </div>
+      <div class="prof-actions">
+        <button class="btn-edit-prof" onclick="toggleEditForm()">✏ EDIT PROFILE</button>
+        <button class="btn-logout-prof" onclick="vngLogout()">🚪 LOGOUT</button>
+      </div>
+    </div>
+
+    <!-- Bio Section -->
+    <div class="prof-section">
+      <div class="prof-sec-h">ABOUT ME</div>
+      <div class="prof-bio-txt empty" id="prof-bio-display">No bio yet — click Edit Profile to add one.</div>
+
+      <!-- Edit Form -->
+      <div class="edit-form-wrap" id="edit-form-wrap">
+        <div class="ef-field">
+          <label class="ef-label">USERNAME</label>
+          <input type="text" class="ef-input" id="edit-username" maxlength="20" placeholder="Your gamer tag">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">BIO</label>
+          <textarea class="ef-textarea" id="edit-bio" rows="3" placeholder="Tell the community about yourself..."></textarea>
+        </div>
+        <div class="ef-actions">
+          <button class="btn-save" onclick="saveProfile()">SAVE CHANGES</button>
+          <button class="btn-cancel-edit" onclick="toggleEditForm()">CANCEL</button>
+          <span class="save-msg" id="save-msg">✓ SAVED</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="prof-section">
+      <div class="prof-sec-h">ACCOUNT STATS</div>
+      <div class="prof-stats-row">
+        <div class="pstt"><div class="pstt-n">⚡</div><div class="pstt-l">VNG MEMBER</div></div>
+        <div class="pstt"><div class="pstt-n" id="prof-stat-days">0</div><div class="pstt-l">DAYS ACTIVE</div></div>
+        <div class="pstt"><div class="pstt-n">🌐</div><div class="pstt-l">NOVA GENERATION</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <!-- ═══ SCRIPTS ═══ -->
 <script>
-// ── LOADER
-window.addEventListener('load', () => {
-  const loader = document.getElementById('vng-loader');
-  setTimeout(() => {
-    loader.classList.add('hidden');
-  }, 2000);
-});
-
 // ── Custom cursor
 const cur=document.getElementById('cur'),curdot=document.getElementById('curdot');
 let mx=0,my=0,cx=0,cy=0;
@@ -1359,24 +1744,62 @@ const ps=[];for(let i=0;i<100;i++)ps.push(new P());
 function drawConn(){for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,245,255,${.03*(1-d/90)})`;ctx.lineWidth=.4;ctx.stroke();}}}
 (function anim(){ctx.clearRect(0,0,canvas.width,canvas.height);ps.forEach(p=>{p.u();p.d();});drawConn();requestAnimationFrame(anim);})();
 
-// ── Navbar active + scroll
-const nav=document.getElementById('navbar');
-const secs=['home','updates','projects','vision','community','about'];
-window.addEventListener('scroll',()=>{
-  nav.classList.toggle('scrolled',window.scrollY>40);
-  const sp=window.scrollY+100;
-  secs.forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    const top=el.offsetTop,bot=top+el.offsetHeight;
-    const a=document.querySelector(`.nav-links a[href="#${id}"]`);
-    if(a)a.classList.toggle('active',sp>=top&&sp<bot);
-  });
-});
+// ── PAGE SWITCHING
+let revObs;
 
-// ── Scroll reveal
-const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+function initReveal(pg){
+  if(revObs) revObs.disconnect();
+  revObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+  },{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+  pg.querySelectorAll('.reveal').forEach(el=>{
+    el.classList.remove('visible');
+    revObs.observe(el);
+  });
+  // immediately trigger visible reveals
+  setTimeout(()=>{
+    pg.querySelectorAll('.reveal').forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.top<window.innerHeight&&r.bottom>0) el.classList.add('visible');
+    });
+  },60);
+}
+
+function showPg(id){
+  document.querySelectorAll('.pg-section').forEach(p=>{
+    p.style.opacity='0';
+    p.style.transition='opacity .2s';
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('.pg-section').forEach(p=>p.classList.remove('pg-active'));
+    const t=document.getElementById('pg-'+id);
+    t.classList.add('pg-active');
+    t.style.opacity='0';
+    t.style.transition='opacity .25s';
+    window.scrollTo(0,0);
+    setTimeout(()=>{t.style.opacity='1';},20);
+    // Nav active state
+    document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+    const na=document.querySelector('.nav-links a[data-page="'+id+'"]');
+    if(na)na.classList.add('active');
+    // Hamburger close
+    document.getElementById('navlinks').classList.remove('open');
+    // Skills
+    if(id==='about') triggerSkills(t);
+    // Counters
+    t.querySelectorAll('.cnt').forEach(el=>{
+      if(!el.dataset.done){
+        el.dataset.done='1';
+        const v=parseFloat(el.dataset.val);
+        animCount(el,v,v>=1000?'+':'',false);
+      }
+    });
+    initReveal(t);
+  },200);
+}
+
+// Set home active on load
+document.querySelector('.nav-links a[data-page="home"]').classList.add('active');
 
 // ── Counter animation
 function animCount(el,target,suffix,isFloat){
@@ -1388,12 +1811,21 @@ function animCount(el,target,suffix,isFloat){
     if(p<1)requestAnimationFrame(frame);
   })(start);
 }
-const cntObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target,v=parseFloat(el.dataset.val);animCount(el,v,v>=1000?'+':'',false);cntObs.unobserve(el);}});},{threshold:.5});
-document.querySelectorAll('.cnt').forEach(el=>cntObs.observe(el));
+// trigger counters on home load
+document.querySelectorAll('#pg-home .cnt').forEach(el=>{
+  const v=parseFloat(el.dataset.val);
+  animCount(el,v,v>=1000?'+':'',false);
+  el.dataset.done='1';
+});
 
 // ── Skills animate
-const skillObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.skill-fill').forEach(bar=>{const w=bar.dataset.w;bar.style.width='0';setTimeout(()=>{bar.style.width=w+'%';},100);});skillObs.unobserve(e.target);}});},{threshold:.3});
-document.querySelectorAll('.skills-section').forEach(el=>skillObs.observe(el));
+function triggerSkills(pg){
+  pg.querySelectorAll('.skill-fill').forEach(bar=>{
+    const w=bar.dataset.w;
+    bar.style.width='0';
+    setTimeout(()=>{bar.style.width=w+'%';},200);
+  });
+}
 
 // ── Project filter
 function filterProj(btn,cat){
@@ -1405,8 +1837,314 @@ function filterProj(btn,cat){
   });
 }
 
-// ── Close mobile menu on link click
-document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navlinks').classList.remove('open')));
+// ── Hamburger
+document.getElementById('hamburger').onclick=()=>document.getElementById('navlinks').classList.toggle('open');
+
+// ── Init home reveal
+initReveal(document.getElementById('pg-home'));
+
+/* ═══════════════════════════════════════════════════════
+   FIREBASE AUTHENTICATION SYSTEM
+   ─────────────────────────────────────────────────────
+   SETUP REQUIRED:
+   1. Go to https://console.firebase.google.com
+   2. Create a project → Enable Email/Password Auth
+   3. Create Firestore Database (test mode to start)
+   4. Create Storage bucket
+   5. Replace the config below with your own values
+═══════════════════════════════════════════════════════ */
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyCA0GZetrGCPHv4251w1jBHLW7XfCM1hr0",
+  authDomain:        "vng-ba0d6.firebaseapp.com",
+  projectId:         "vng-ba0d6",
+  storageBucket:     "vng-ba0d6.firebasestorage.app",
+  messagingSenderId: "440104586580",
+  appId:             "1:440104586580:web:5a6ebfb60a322e5b038cc1"
+};
+
+// Init Firebase
+let fbApp, fbAuth, fbDb, fbStorage;
+try {
+  fbApp     = firebase.initializeApp(firebaseConfig);
+  fbAuth    = firebase.auth();
+  fbDb      = firebase.firestore();
+  fbStorage = firebase.storage();
+} catch(e) {
+  console.warn('[VNG Auth] Firebase not configured yet:', e.message);
+}
+
+/* ── AUTH STATE LISTENER ── */
+if(fbAuth) {
+  fbAuth.onAuthStateChanged(user => {
+    if(user) {
+      showNavUser(user);
+      loadProfileData(user);
+    } else {
+      showNavLogin();
+    }
+  });
+}
+
+/* ── NAV AUTH CONTROLS ── */
+function showNavLogin() {
+  document.getElementById('btn-nav-login').style.display = '';
+  document.getElementById('nav-user-wrap').style.display = 'none';
+}
+function showNavUser(user) {
+  document.getElementById('btn-nav-login').style.display = 'none';
+  const wrap = document.getElementById('nav-user-wrap');
+  wrap.style.display = '';
+  // Set name
+  const uname = user.displayName || user.email.split('@')[0];
+  document.getElementById('nav-uname-txt').textContent = uname.toUpperCase();
+  // Set avatar
+  if(user.photoURL) {
+    document.getElementById('nav-av-icon').innerHTML = `<img src="${user.photoURL}" alt="av">`;
+  } else {
+    document.getElementById('nav-av-icon').innerHTML = `<span>${uname[0].toUpperCase()}</span>`;
+  }
+}
+function toggleNavMenu() {
+  const dd = document.getElementById('nav-dropdown');
+  const ch = document.getElementById('nav-chevron');
+  dd.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+function closeNavMenu() {
+  document.getElementById('nav-dropdown').classList.remove('open');
+  document.getElementById('nav-chevron').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('nav-user-wrap');
+  if(wrap && !wrap.contains(e.target)) closeNavMenu();
+});
+
+/* ── HELPER: show message ── */
+function authMsg(id, text, type) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.className = 'auth-msg ' + type;
+  el.textContent = text;
+}
+function clearMsg(id) {
+  const el = document.getElementById(id);
+  if(el) { el.className = 'auth-msg'; el.textContent = ''; }
+}
+function setLoading(btnId, loading, text) {
+  const btn = document.getElementById(btnId);
+  if(!btn) return;
+  btn.disabled = loading;
+  btn.textContent = loading ? '⟳ PLEASE WAIT...' : text;
+}
+
+/* ── LOGIN ── */
+async function vngLogin() {
+  if(!fbAuth) return authMsg('login-msg','Firebase not configured yet. Add your config.','error');
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  clearMsg('login-msg');
+  if(!email || !pass) return authMsg('login-msg','Please fill in all fields.','error');
+  setLoading('login-btn', true, 'ENTER THE PORTAL');
+  try {
+    await fbAuth.signInWithEmailAndPassword(email, pass);
+    showPg('profile');
+  } catch(e) {
+    authMsg('login-msg', getFriendlyError(e.code), 'error');
+  }
+  setLoading('login-btn', false, 'ENTER THE PORTAL');
+}
+
+/* ── REGISTER ── */
+async function vngRegister() {
+  if(!fbAuth) return authMsg('register-msg','Firebase not configured yet. Add your config.','error');
+  const username = document.getElementById('reg-username').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const pass     = document.getElementById('reg-password').value;
+  const confirm  = document.getElementById('reg-confirm').value;
+  clearMsg('register-msg');
+  if(!username || !email || !pass || !confirm) return authMsg('register-msg','Please fill in all fields.','error');
+  if(username.length < 3) return authMsg('register-msg','Username must be at least 3 characters.','error');
+  if(pass !== confirm) return authMsg('register-msg','Passwords do not match.','error');
+  if(pass.length < 6) return authMsg('register-msg','Password must be at least 6 characters.','error');
+  setLoading('register-btn', true, 'CREATE ACCOUNT');
+  try {
+    const cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: username });
+    await fbDb.collection('users').doc(cred.user.uid).set({
+      username:   username,
+      email:      email,
+      bio:        '',
+      photoURL:   '',
+      createdAt:  firebase.firestore.FieldValue.serverTimestamp(),
+      joinDate:   new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+    });
+    showPg('profile');
+  } catch(e) {
+    authMsg('register-msg', getFriendlyError(e.code), 'error');
+  }
+  setLoading('register-btn', false, 'CREATE ACCOUNT');
+}
+
+/* ── FORGOT PASSWORD ── */
+async function vngForgot() {
+  if(!fbAuth) return authMsg('forgot-msg','Firebase not configured yet. Add your config.','error');
+  const email = document.getElementById('forgot-email').value.trim();
+  clearMsg('forgot-msg');
+  if(!email) return authMsg('forgot-msg','Please enter your email address.','error');
+  setLoading('forgot-btn', true, 'SEND RESET LINK');
+  try {
+    await fbAuth.sendPasswordResetEmail(email);
+    authMsg('forgot-msg','Reset link sent! Check your inbox.','success');
+  } catch(e) {
+    authMsg('forgot-msg', getFriendlyError(e.code), 'error');
+  }
+  setLoading('forgot-btn', false, 'SEND RESET LINK');
+}
+
+/* ── LOGOUT ── */
+async function vngLogout() {
+  if(!fbAuth) return;
+  await fbAuth.signOut();
+  showPg('home');
+}
+
+/* ── LOAD PROFILE ── */
+async function loadProfileData(user) {
+  try {
+    const snap = await fbDb.collection('users').doc(user.uid).get();
+    const data = snap.exists ? snap.data() : {};
+    const uname = data.username || user.displayName || user.email.split('@')[0];
+    const bio   = data.bio || '';
+    const photo = data.photoURL || user.photoURL || '';
+    const joined = data.joinDate || 'Unknown';
+
+    // Update display
+    document.getElementById('prof-name-display').textContent  = uname.toUpperCase();
+    document.getElementById('prof-email-display').textContent = user.email;
+    document.getElementById('prof-since-display').textContent = 'MEMBER SINCE ' + joined.toUpperCase();
+
+    // Bio
+    const bioEl = document.getElementById('prof-bio-display');
+    if(bio) { bioEl.textContent = bio; bioEl.classList.remove('empty'); }
+    else { bioEl.textContent = 'No bio yet — click Edit Profile to add one.'; bioEl.classList.add('empty'); }
+
+    // Avatar
+    if(photo) {
+      document.getElementById('prof-av-hex').innerHTML = `<img src="${photo}" alt="avatar">`;
+    } else {
+      document.getElementById('prof-av-hex').innerHTML = `<span id="prof-av-letter">${uname[0].toUpperCase()}</span>`;
+    }
+
+    // Edit form defaults
+    document.getElementById('edit-username').value = uname;
+    document.getElementById('edit-bio').value = bio;
+
+    // Days active
+    if(data.createdAt) {
+      const days = Math.floor((Date.now() - data.createdAt.toDate().getTime()) / 86400000);
+      document.getElementById('prof-stat-days').textContent = days || 0;
+    }
+
+    // Nav
+    showNavUser(user);
+  } catch(e) {
+    console.warn('[VNG Profile] Load error:', e.message);
+  }
+}
+
+/* ── SAVE PROFILE ── */
+async function saveProfile() {
+  if(!fbAuth || !fbAuth.currentUser) return;
+  const uid      = fbAuth.currentUser.uid;
+  const username = document.getElementById('edit-username').value.trim();
+  const bio      = document.getElementById('edit-bio').value.trim();
+  if(!username) return;
+  try {
+    await fbDb.collection('users').doc(uid).update({ username, bio });
+    await fbAuth.currentUser.updateProfile({ displayName: username });
+    loadProfileData(fbAuth.currentUser);
+    toggleEditForm();
+    const msg = document.getElementById('save-msg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  } catch(e) {
+    console.error('[VNG Save]', e.message);
+  }
+}
+
+/* ── UPLOAD AVATAR ── */
+async function uploadAvatar(file) {
+  if(!file || !fbAuth || !fbAuth.currentUser || !fbStorage) return;
+  const uid = fbAuth.currentUser.uid;
+  const uploading = document.getElementById('av-uploading');
+  uploading.style.display = 'flex';
+  try {
+    const ref = fbStorage.ref(`avatars/${uid}/profile.jpg`);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    await fbDb.collection('users').doc(uid).update({ photoURL: url });
+    await fbAuth.currentUser.updateProfile({ photoURL: url });
+    document.getElementById('prof-av-hex').innerHTML = `<img src="${url}" alt="avatar">`;
+    document.getElementById('nav-av-icon').innerHTML = `<img src="${url}" alt="av">`;
+  } catch(e) {
+    console.error('[VNG Upload]', e.message);
+  }
+  uploading.style.display = 'none';
+}
+
+/* ── TOGGLE EDIT FORM ── */
+function toggleEditForm() {
+  document.getElementById('edit-form-wrap').classList.toggle('open');
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkStrength(val) {
+  const fill  = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  if(!fill) return;
+  let score = 0;
+  if(val.length >= 6) score++;
+  if(val.length >= 10) score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { w:'0%',   c:'transparent',      t:'' },
+    { w:'25%',  c:'#ff3c3c',          t:'WEAK' },
+    { w:'50%',  c:'#ff8c00',          t:'FAIR' },
+    { w:'75%',  c:'#ffd700',          t:'GOOD' },
+    { w:'100%', c:'#00ff88',          t:'STRONG' },
+  ];
+  const l = levels[Math.min(score, 4)];
+  fill.style.width = l.w;
+  fill.style.background = l.c;
+  label.textContent = l.t;
+  label.style.color = l.c;
+}
+
+/* ── TOGGLE PASSWORD VISIBILITY ── */
+function toggleEye(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if(!inp) return;
+  if(inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+/* ── FRIENDLY ERROR MESSAGES ── */
+function getFriendlyError(code) {
+  const map = {
+    'auth/user-not-found':      'No account found with this email.',
+    'auth/wrong-password':      'Incorrect password. Try again.',
+    'auth/email-already-in-use':'This email is already registered.',
+    'auth/invalid-email':       'Please enter a valid email address.',
+    'auth/weak-password':       'Password must be at least 6 characters.',
+    'auth/too-many-requests':   'Too many attempts. Please try again later.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
+
 </script>
 </body>
 </html>
