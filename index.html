@@ -3,8 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VNG — Venky Nova Generation. Building the future through games, web projects, and a thriving community. One project at a time.">
+<meta name="theme-color" content="#030508">
+<meta property="og:title" content="VNG — Venky Nova Generation">
+<meta property="og:description" content="Building the future through games, web projects, and a thriving community.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vng.dev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VNG — Venky Nova Generation">
 <title>VNG — Venky Nova Generation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -25,15 +34,17 @@ a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:none;}
 
 /* ── PAGE SECTIONS ── */
-.pg-section{display:none;min-height:calc(100vh - var(--nav-h));}
+.pg-section{display:none;min-height:calc(100vh - var(--nav-h));opacity:1;transition:opacity .22s ease;}
 .pg-section.pg-active{display:block;}
+.pg-section.pg-leaving{opacity:0;pointer-events:none;}
 nav{background:rgba(3,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
 .nav-links a.active,.nav-links a:hover{color:var(--cyan);border-color:rgba(0,245,255,.2);background:rgba(0,245,255,.04);}
 
-/* CURSOR */
-#cur,#curdot{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%);}
+/* CURSOR — hidden on touch devices via JS; will-change for GPU layer */
+#cur,#curdot{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%);will-change:left,top;}
 #cur{width:22px;height:22px;border:1.5px solid var(--cyan);transition:width .2s,height .2s,border-color .2s;}
 #curdot{width:4px;height:4px;background:var(--cyan);}
+@media(hover:none){#cur,#curdot{display:none;}}
 
 /* BG LAYERS */
 #pcanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
@@ -379,13 +390,6 @@ section{position:relative;z-index:1;padding:100px 60px;}
   border-color:rgba(0,245,255,.95);
   color:#fff;
 }
-
-/* Website — Bright Cyan */
-.plat-chip.pc-web{
-  background:rgba(0,190,210,.80);
-  border-color:rgba(0,245,255,.95);
-  color:#fff;
-}
 .btn-gc{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:14px 36px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:none;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);}
 .btn-gc:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(0,245,255,.5);}
 @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
@@ -563,114 +567,163 @@ footer{
 /* ═══════════════════════════════════════
    AUTH SYSTEM — FIREBASE
 ═══════════════════════════════════════ */
-/* Nav auth control */
-.nav-auth-wrap{display:flex;align-items:center;gap:10px;}
-.nav-login-btn{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:9px 18px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
-.nav-login-btn:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(0,245,255,.4);}
-.nav-user-wrap{position:relative;display:none;}
-.nav-user-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border:1px solid var(--line);transition:all .2s;background:transparent;}
-.nav-user-trigger:hover{border-color:rgba(0,245,255,.35);background:rgba(0,245,255,.04);}
-.nav-av{width:28px;height:28px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;color:#000;overflow:hidden;flex-shrink:0;}
-.nav-av img{width:100%;height:100%;object-fit:cover;}
-.nav-uname{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;color:var(--cyan);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nav-chevron{font-size:8px;color:var(--t3);transition:transform .2s;}
-.nav-chevron.open{transform:rotate(180deg);}
-.nav-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:rgba(3,5,8,.97);border:1px solid rgba(0,245,255,.18);backdrop-filter:blur(20px);min-width:170px;z-index:3000;display:none;}
-.nav-dropdown.open{display:block;}
-.nav-dropdown a{display:flex;align-items:center;gap:10px;padding:12px 16px;font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1px;color:var(--t2);transition:all .2s;cursor:pointer;text-decoration:none;border-bottom:1px solid rgba(0,245,255,.05);}
-.nav-dropdown a:last-child{border-bottom:none;color:#ff6b8a;}
-.nav-dropdown a:hover{color:var(--cyan);background:rgba(0,245,255,.04);padding-left:20px;}
-.nav-dropdown a:last-child:hover{color:#ff4444;background:rgba(255,0,60,.05);}
 
-/* Auth card pages */
-.auth-page{min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden;}
-.auth-bg-orb1{position:absolute;width:450px;height:450px;border-radius:50%;background:rgba(0,245,255,.06);filter:blur(90px);top:-15%;left:-10%;pointer-events:none;}
-.auth-bg-orb2{position:absolute;width:350px;height:350px;border-radius:50%;background:rgba(191,0,255,.06);filter:blur(80px);bottom:-10%;right:-5%;pointer-events:none;}
-.auth-card{background:var(--card);border:1px solid rgba(0,245,255,.15);padding:48px;width:100%;max-width:460px;position:relative;overflow:hidden;}
+/* ── Nav account icon ── */
+.nav-acct-btn{
+  width:38px;height:38px;
+  border:1px solid rgba(0,245,255,.2);
+  background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .25s;position:relative;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  overflow:hidden;
+}
+.nav-acct-btn:hover{border-color:rgba(0,245,255,.55);background:rgba(0,245,255,.08);}
+.nav-acct-btn.online{border-color:rgba(0,245,255,.6);background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(191,0,255,.15));}
+.nav-acct-ico{font-size:17px;line-height:1;}
+.nav-acct-ini{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:#000;background:linear-gradient(135deg,var(--cyan),var(--purple));width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.nav-acct-img{width:100%;height:100%;object-fit:cover;}
+.nav-online-dot{position:absolute;bottom:4px;right:4px;width:7px;height:7px;background:#00ff88;border-radius:50%;border:1px solid var(--bg);display:none;}
+.nav-acct-btn.online .nav-online-dot{display:block;}
+
+/* ── Account page layout ── */
+.acc-page-wrap{min-height:calc(100vh - var(--nav-h));position:relative;overflow:hidden;}
+.acc-orb1{position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(0,245,255,.05);filter:blur(90px);top:-15%;left:-10%;pointer-events:none;}
+.acc-orb2{position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(191,0,255,.05);filter:blur(80px);bottom:-10%;right:-5%;pointer-events:none;}
+
+/* ── Auth panel (logged out) ── */
+.auth-panel-wrap{display:flex;align-items:center;justify-content:center;padding:50px 20px;min-height:calc(100vh - var(--nav-h));position:relative;z-index:1;} 
+.auth-card{background:var(--card);border:1px solid rgba(0,245,255,.15);padding:44px 48px;width:100%;max-width:460px;position:relative;overflow:hidden;}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));}
-.auth-logo-txt{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;letter-spacing:5px;margin-bottom:6px;}
-.auth-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:6px;}
-.auth-sub{font-size:12px;color:var(--t3);text-align:center;letter-spacing:1px;margin-bottom:28px;line-height:1.5;}
-.auth-field{margin-bottom:18px;position:relative;}
+.auth-logo-txt{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;letter-spacing:5px;margin-bottom:24px;}
+
+/* Auth tabs inside card */
+.auth-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:1px solid rgba(0,245,255,.1);}
+.auth-tab{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:10px 18px;background:transparent;border:none;color:var(--t3);cursor:pointer;transition:color .2s;position:relative;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.auth-tab:hover{color:var(--t1);}
+.auth-tab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+.auth-panel{display:none;}
+.auth-panel.on{display:block;}
+
+.auth-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;letter-spacing:2px;color:var(--t1);margin-bottom:6px;}
+.auth-sub{font-size:12px;color:var(--t3);letter-spacing:1px;margin-bottom:24px;line-height:1.5;}
+.auth-field{margin-bottom:17px;position:relative;}
 .auth-label{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:3px;color:var(--t3);margin-bottom:7px;display:block;}
-.auth-input{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.18);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;padding:12px 16px;outline:none;transition:border-color .3s,box-shadow .3s;letter-spacing:.5px;}
-.auth-input:focus{border-color:rgba(0,245,255,.55);box-shadow:0 0 16px rgba(0,245,255,.08);}
+.auth-input{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);color:var(--t1);font-family:'Rajdhani',sans-serif;font-size:15px;padding:12px 15px;outline:none;transition:border-color .3s,box-shadow .3s;letter-spacing:.3px;}
+.auth-input:focus{border-color:rgba(0,245,255,.5);box-shadow:0 0 14px rgba(0,245,255,.07);}
 .auth-input::placeholder{color:var(--t3);opacity:.5;}
-.auth-btn{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:15px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:6px;}
-.auth-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,255,.4);}
+.auth-btn{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:14px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:6px;}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,255,.35);}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
-.auth-btn-s{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:13px;background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:8px;}
-.auth-btn-s:hover{border-color:var(--purple);color:var(--purple);}
-.auth-msg{padding:11px 14px;margin-bottom:18px;font-size:11px;letter-spacing:1px;font-family:'Share Tech Mono',monospace;line-height:1.5;display:none;}
+.auth-msg{padding:10px 14px;margin-bottom:16px;font-size:11px;letter-spacing:1px;font-family:'Share Tech Mono',monospace;line-height:1.5;display:none;}
 .auth-msg.error{background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;display:block;}
 .auth-msg.success{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:#00ff88;display:block;}
-.auth-links{display:flex;justify-content:space-between;margin-top:18px;flex-wrap:wrap;gap:6px;}
-.auth-links a{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:1.5px;color:var(--t3);cursor:pointer;transition:color .2s;text-decoration:none;}
-.auth-links a:hover{color:var(--cyan);}
-.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
-.auth-divider span{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(0,245,255,.08);}
-.eye-toggle{position:absolute;right:12px;top:38px;cursor:pointer;color:var(--t3);font-size:14px;user-select:none;transition:color .2s;}
+.auth-footer-link{text-align:center;margin-top:16px;font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:1.5px;color:var(--t3);}
+.auth-footer-link a{color:var(--cyan);cursor:pointer;transition:color .2s;text-decoration:none;}
+.auth-footer-link a:hover{color:var(--purple);}
+.eye-toggle{position:absolute;right:12px;top:38px;cursor:pointer;color:var(--t3);font-size:13px;user-select:none;transition:color .2s;}
 .eye-toggle:hover{color:var(--cyan);}
-.strength-wrap{margin-top:6px;}
+.strength-wrap{margin-top:5px;}
 .strength-bar{height:2px;background:rgba(0,245,255,.1);overflow:hidden;}
 .strength-fill{height:100%;width:0%;transition:width .3s,background .3s;}
-.strength-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;margin-top:4px;}
+.strength-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;margin-top:3px;}
 
-/* Profile page */
-.profile-pg{max-width:860px;margin:0 auto;padding:50px 60px;}
-.profile-hero-card{background:var(--card);border:1px solid rgba(0,245,255,.12);padding:36px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;position:relative;overflow:hidden;margin-bottom:14px;}
-.profile-hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));}
-.av-container{position:relative;width:88px;height:88px;flex-shrink:0;}
-.av-hex{width:88px;height:88px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#000;overflow:hidden;}
-.av-hex img{width:100%;height:100%;object-fit:cover;}
-.av-edit{position:absolute;bottom:-2px;right:-4px;width:24px;height:24px;background:var(--purple);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:transform .2s;}
-.av-edit:hover{transform:scale(1.2);}
+/* ── Profile Dashboard (logged in) ── */
+.dash-wrap{max-width:1000px;margin:0 auto;padding:50px 60px;position:relative;z-index:1;}
+
+.dash-hero{background:var(--card);border:1px solid rgba(0,245,255,.14);padding:36px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;position:relative;overflow:hidden;margin-bottom:16px;}
+.dash-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),var(--purple));}
+.dash-av-wrap{position:relative;width:90px;height:90px;flex-shrink:0;}
+.dash-av{width:90px;height:90px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:#000;overflow:hidden;}
+.dash-av img{width:100%;height:100%;object-fit:cover;}
+.dash-av-edit{position:absolute;bottom:-2px;right:-4px;width:26px;height:26px;background:var(--purple);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:transform .2s;color:#fff;}
+.dash-av-edit:hover{transform:scale(1.2);}
 #av-file{display:none;}
-.av-uploading{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;font-size:11px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);}
-.prof-name{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;color:var(--cyan);margin-bottom:4px;}
-.prof-email{font-size:12px;color:var(--t3);letter-spacing:1px;margin-bottom:6px;}
-.prof-since{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:2px;}
-.prof-badge{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;padding:3px 10px;border:1px solid rgba(0,245,255,.3);color:var(--cyan);display:inline-block;margin-top:8px;}
-.prof-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
-.prof-actions button{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:9px 16px;cursor:pointer;transition:all .25s;white-space:nowrap;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
-.btn-edit-prof{background:transparent;border:1px solid rgba(0,245,255,.3);color:var(--cyan);}
-.btn-edit-prof:hover{background:rgba(0,245,255,.07);}
-.btn-logout-prof{background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;}
-.btn-logout-prof:hover{background:rgba(255,0,60,.15);}
-.prof-section{background:var(--card);border:1px solid rgba(0,245,255,.1);padding:26px;margin-bottom:14px;}
-.prof-sec-h{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--cyan);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(0,245,255,.08);}
-.prof-bio-txt{font-size:14px;color:var(--t2);line-height:1.75;}
-.prof-bio-txt.empty{color:var(--t3);font-style:italic;}
-.prof-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.pstt{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.08);padding:16px;text-align:center;}
-.pstt-n{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);}
-.pstt-l{font-size:8px;letter-spacing:2px;color:var(--t3);margin-top:4px;}
-/* Inline edit form */
-.edit-form-wrap{display:none;margin-top:16px;}
-.edit-form-wrap.open{display:block;}
-.ef-field{margin-bottom:15px;}
+.dash-av-loading{position:absolute;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;font-size:18px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);}
+.dash-name{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:2px;color:var(--cyan);margin-bottom:4px;}
+.dash-email{font-size:12px;color:var(--t3);letter-spacing:1px;margin-bottom:6px;}
+.dash-since{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:2px;}
+.dash-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.d-badge{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;padding:3px 10px;border:1px solid rgba(0,245,255,.3);color:var(--cyan);display:inline-block;}
+.d-badge.pu{border-color:rgba(191,0,255,.3);color:var(--purple);}
+.dash-btns{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.dash-btns button{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:10px 18px;cursor:pointer;transition:all .25s;white-space:nowrap;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.btn-edit-p{background:transparent;border:1px solid rgba(0,245,255,.3);color:var(--cyan);}
+.btn-edit-p:hover{background:rgba(0,245,255,.07);}
+.btn-logout-p{background:rgba(255,0,60,.07);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;}
+.btn-logout-p:hover{background:rgba(255,0,60,.14);}
+
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dash-card{background:var(--card);border:1px solid rgba(0,245,255,.1);padding:26px;position:relative;overflow:hidden;}
+.dash-card.full{grid-column:span 2;}
+.dash-card-h{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--cyan);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(0,245,255,.08);}
+.dash-bio-txt{font-size:14px;color:var(--t2);line-height:1.75;}
+.dash-bio-txt.empty{color:var(--t3);font-style:italic;}
+
+/* Edit form inside dashboard */
+.dash-edit-form{display:none;margin-top:16px;border-top:1px solid rgba(0,245,255,.08);padding-top:16px;}
+.dash-edit-form.open{display:block;}
+.ef-field{margin-bottom:14px;}
 .ef-label{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:3px;color:var(--t3);margin-bottom:7px;display:block;}
-.ef-input,.ef-textarea{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .3s;resize:vertical;letter-spacing:.3px;}
-.ef-input:focus,.ef-textarea:focus{border-color:rgba(0,245,255,.5);box-shadow:0 0 10px rgba(0,245,255,.07);}
-.ef-actions{display:flex;gap:10px;margin-top:14px;}
+.ef-input,.ef-textarea{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.14);color:var(--t1);font-family:'Rajdhani',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .3s;resize:vertical;}
+.ef-input:focus,.ef-textarea:focus{border-color:rgba(0,245,255,.45);box-shadow:0 0 10px rgba(0,245,255,.06);}
+.ef-actions{display:flex;gap:10px;align-items:center;margin-top:12px;}
 .btn-save{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
 .btn-save:hover{box-shadow:0 0 18px rgba(0,245,255,.3);}
 .btn-cancel-edit{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:transparent;color:var(--t2);border:1px solid rgba(255,255,255,.1);cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
 .btn-cancel-edit:hover{border-color:rgba(255,255,255,.3);}
-.save-msg{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#00ff88;margin-left:10px;opacity:0;transition:opacity .3s;}
+.save-msg{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:#00ff88;opacity:0;transition:opacity .3s;}
 .save-msg.show{opacity:1;}
 
-@media(max-width:700px){
+/* Stats grid */
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.dst{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.08);padding:16px;text-align:center;}
+.dst-n{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);}
+.dst-l{font-size:8px;letter-spacing:2px;color:var(--t3);margin-top:4px;}
+
+/* Quick links */
+.dash-quick-links{display:flex;flex-direction:column;gap:6px;}
+.dql-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(0,245,255,.08);background:rgba(0,245,255,.02);cursor:pointer;transition:all .2s;font-size:13px;color:var(--t2);letter-spacing:.5px;}
+.dql-item:hover{border-color:rgba(0,245,255,.25);color:var(--cyan);background:rgba(0,245,255,.04);padding-left:18px;}
+.dql-icon{font-size:15px;width:20px;text-align:center;}
+
+/* Settings card */
+.dash-settings{display:flex;flex-direction:column;gap:8px;}
+.ds-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,245,255,.06);}
+.ds-row:last-child{border-bottom:none;}
+.ds-key{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;color:var(--t3);}
+.ds-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--t2);}
+
+@media(max-width:760px){
   .auth-card{padding:30px 22px;}
-  .profile-hero-card{grid-template-columns:1fr;text-align:center;gap:20px;}
-  .prof-actions{flex-direction:row;justify-content:center;align-items:center;}
-  .av-container{margin:0 auto;}
-  .profile-pg{padding:30px 20px;}
-  .prof-stats-row{grid-template-columns:1fr 1fr;}
-  .nav-uname{display:none;}
+  .dash-hero{grid-template-columns:1fr;text-align:center;gap:20px;}
+  .dash-btns{flex-direction:row;justify-content:center;align-items:center;}
+  .dash-av-wrap{margin:0 auto;}
+  .dash-wrap{padding:30px 20px;}
+  .dash-grid{grid-template-columns:1fr;}
+  .dash-card.full{grid-column:span 1;}
+  .dash-stats{grid-template-columns:1fr 1fr;}
 }
 </style>
+
+<!-- ════ FIREBASE SDK v10.7.1 compat ════ -->
+<!-- onerror on each tag catches CDN failures at load time -->
+<script
+  src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"
+  onerror="window._fbLoadErr=true;console.error('[VNG] firebase-app-compat.js failed to load — check network / ad-blocker')">
+</script>
+<script
+  src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"
+  onerror="window._fbLoadErr=true;console.error('[VNG] firebase-auth-compat.js failed to load')">
+</script>
+<script
+  src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"
+  onerror="window._fbLoadErr=true;console.error('[VNG] firebase-firestore-compat.js failed to load')">
+</script>
+<script
+  src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"
+  onerror="window._fbLoadErr=true;console.error('[VNG] firebase-storage-compat.js failed to load')">
+</script>
 </head>
 <body>
 
@@ -682,7 +735,7 @@ footer{
 
 <!-- ═══ NAV ═══ -->
 <nav id="navbar">
-  <a href="#home" class="logo">VNG<span>·</span><sub>NOVA</sub></a>
+  <a href="#" class="logo" onclick="showPg('home');return false;">VNG<span>·</span><sub>NOVA</sub></a>
   <ul class="nav-links" id="navlinks">
     <li><a data-page="home" onclick="showPg('home')">🏠 HOME</a></li>
     <li><a data-page="updates" onclick="showPg('updates')">📢 UPDATES</a></li>
@@ -691,21 +744,10 @@ footer{
     <li><a data-page="community" onclick="showPg('community')">🌐 COMMUNITY</a></li>
     <li><a data-page="about" onclick="showPg('about')">👨‍💻 ABOUT</a></li>
   </ul>
-  <div class="nav-auth-wrap">
-    <button id="btn-nav-login" class="nav-login-btn" onclick="showPg('login')">⚡ LOGIN</button>
-    <div class="nav-user-wrap" id="nav-user-wrap">
-      <div class="nav-user-trigger" onclick="toggleNavMenu()">
-        <div class="nav-av" id="nav-av-icon"><span id="nav-av-letter">V</span></div>
-        <span class="nav-uname" id="nav-uname-txt">USER</span>
-        <span class="nav-chevron" id="nav-chevron">▾</span>
-      </div>
-      <div class="nav-dropdown" id="nav-dropdown">
-        <a onclick="showPg('profile');closeNavMenu()">👤 MY PROFILE</a>
-        <a onclick="closeNavMenu();showPg('home')">🏠 HOME</a>
-        <a onclick="vngLogout()">🚪 LOGOUT</a>
-      </div>
-    </div>
-  </div>
+  <button class="nav-acct-btn" id="nav-acct-btn" onclick="showPg('account')" title="Account">
+    <span class="nav-acct-ico" id="nav-acct-ico">👤</span>
+    <div class="nav-online-dot"></div>
+  </button>
   <div class="hamburger" id="hamburger">
     <span></span><span></span><span></span>
   </div>
@@ -1557,277 +1599,377 @@ footer{
 </div><!-- /pg-about -->
 
 <!-- ═══════════════════════════════════════════════
-     PAGE: LOGIN
+     PAGE: ACCOUNT (Login · Register · Reset · Profile)
 ═══════════════════════════════════════════════ -->
-<div id="pg-login" class="page">
-  <div class="auth-page">
-    <div class="auth-bg-orb1"></div>
-    <div class="auth-bg-orb2"></div>
-    <div class="auth-card">
-      <div class="auth-logo-txt">VNG</div>
-      <h2 class="auth-title">WELCOME BACK</h2>
-      <p class="auth-sub">Sign in to your Nova Generation account</p>
-      <div class="auth-msg" id="login-msg"></div>
-      <div class="auth-field">
-        <label class="auth-label">EMAIL ADDRESS</label>
-        <input type="email" id="login-email" class="auth-input" placeholder="your@email.com">
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">PASSWORD</label>
-        <input type="password" id="login-password" class="auth-input" placeholder="••••••••">
-        <span class="eye-toggle" onclick="toggleEye('login-password',this)">👁</span>
-      </div>
-      <button class="auth-btn" id="login-btn" onclick="vngLogin()">ENTER THE PORTAL</button>
-      <div class="auth-links">
-        <a onclick="showPg('forgot')">Forgot Password?</a>
-        <a onclick="showPg('register')">Create Account →</a>
-      </div>
-    </div>
-  </div>
-</div>
+<div id="pg-account" class="pg-section">
+<div class="acc-page-wrap">
+  <div class="acc-orb1"></div>
+  <div class="acc-orb2"></div>
 
-<!-- ═══════════════════════════════════════════════
-     PAGE: REGISTER
-═══════════════════════════════════════════════ -->
-<div id="pg-register" class="page">
-  <div class="auth-page">
-    <div class="auth-bg-orb1"></div>
-    <div class="auth-bg-orb2"></div>
+  <!-- ══ LOGGED OUT: Tabbed auth card ══ -->
+  <div id="acc-out" class="auth-panel-wrap">
     <div class="auth-card">
       <div class="auth-logo-txt">VNG</div>
-      <h2 class="auth-title">JOIN THE GENERATION</h2>
-      <p class="auth-sub">Create your Venky Nova Generation account</p>
-      <div class="auth-msg" id="register-msg"></div>
-      <div class="auth-field">
-        <label class="auth-label">USERNAME</label>
-        <input type="text" id="reg-username" class="auth-input" placeholder="YourGamerTag" maxlength="20">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab on" onclick="switchAuthTab('login')"   id="tab-login">LOGIN</button>
+        <button class="auth-tab"    onclick="switchAuthTab('register')" id="tab-register">REGISTER</button>
+        <button class="auth-tab"    onclick="switchAuthTab('reset')"    id="tab-reset">RESET</button>
       </div>
-      <div class="auth-field">
-        <label class="auth-label">EMAIL ADDRESS</label>
-        <input type="email" id="reg-email" class="auth-input" placeholder="your@email.com">
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">PASSWORD</label>
-        <input type="password" id="reg-password" class="auth-input" placeholder="Min. 6 characters" oninput="checkStrength(this.value)">
-        <span class="eye-toggle" onclick="toggleEye('reg-password',this)">👁</span>
-        <div class="strength-wrap">
-          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
-          <div class="strength-label" id="strength-label" style="color:var(--t3)"></div>
+
+      <!-- ── LOGIN panel ── -->
+      <form class="auth-panel on" id="panel-login" autocomplete="off" onsubmit="return false;">
+        <h2 class="auth-title">WELCOME BACK</h2>
+        <p class="auth-sub">Sign in to your Nova Generation account</p>
+        <div class="auth-msg" id="login-msg"></div>
+        <div class="auth-field">
+          <label class="auth-label">EMAIL ADDRESS</label>
+          <input type="email" id="login-email" class="auth-input" placeholder="your@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
         </div>
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">CONFIRM PASSWORD</label>
-        <input type="password" id="reg-confirm" class="auth-input" placeholder="Repeat password">
-        <span class="eye-toggle" onclick="toggleEye('reg-confirm',this)">👁</span>
-      </div>
-      <button class="auth-btn" id="register-btn" onclick="vngRegister()">CREATE ACCOUNT</button>
-      <div class="auth-links">
-        <a onclick="showPg('login')">← Back to Login</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════
-     PAGE: FORGOT PASSWORD
-═══════════════════════════════════════════════ -->
-<div id="pg-forgot" class="page">
-  <div class="auth-page">
-    <div class="auth-bg-orb1"></div>
-    <div class="auth-bg-orb2"></div>
-    <div class="auth-card">
-      <div class="auth-logo-txt">VNG</div>
-      <h2 class="auth-title">RESET PASSWORD</h2>
-      <p class="auth-sub">Enter your email and we'll send a reset link to your inbox.</p>
-      <div class="auth-msg" id="forgot-msg"></div>
-      <div class="auth-field">
-        <label class="auth-label">EMAIL ADDRESS</label>
-        <input type="email" id="forgot-email" class="auth-input" placeholder="your@email.com">
-      </div>
-      <button class="auth-btn" id="forgot-btn" onclick="vngForgot()">SEND RESET LINK</button>
-      <div class="auth-links">
-        <a onclick="showPg('login')">← Back to Login</a>
-        <a onclick="showPg('register')">Create Account</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════
-     PAGE: USER PROFILE
-═══════════════════════════════════════════════ -->
-<div id="pg-profile" class="page">
-  <div class="profile-pg">
-
-    <!-- Profile Hero -->
-    <div class="profile-hero-card">
-      <div class="av-container">
-        <div class="av-hex" id="prof-av-hex">
-          <span id="prof-av-letter">V</span>
+        <div class="auth-field">
+          <label class="auth-label">PASSWORD</label>
+          <input type="password" id="login-password" class="auth-input" placeholder="••••••••" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <span class="eye-toggle" onclick="toggleEye('login-password',this)">👁</span>
         </div>
-        <button class="av-edit" onclick="document.getElementById('av-file').click()" title="Change Photo">✏</button>
+        <button type="button" class="auth-btn" id="login-btn" onclick="vngLogin()">⚡ ENTER THE PORTAL</button>
+      </form>
+
+      <!-- ── REGISTER panel ── -->
+      <form class="auth-panel" id="panel-register" autocomplete="off" onsubmit="return false;">
+        <h2 class="auth-title">JOIN THE GENERATION</h2>
+        <p class="auth-sub">Create your Venky Nova Generation account</p>
+        <div class="auth-msg" id="register-msg"></div>
+        <div class="auth-field">
+          <label class="auth-label">USERNAME</label>
+          <input type="text" id="reg-username" class="auth-input" placeholder="YourGamerTag" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">EMAIL ADDRESS</label>
+          <input type="email" id="reg-email" class="auth-input" placeholder="your@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">PASSWORD</label>
+          <input type="password" id="reg-password" class="auth-input" placeholder="Min. 6 characters" oninput="checkStrength(this.value)" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <span class="eye-toggle" onclick="toggleEye('reg-password',this)">👁</span>
+          <div class="strength-wrap">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <div class="strength-label" id="strength-label"></div>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">CONFIRM PASSWORD</label>
+          <input type="password" id="reg-confirm" class="auth-input" placeholder="Repeat password" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <span class="eye-toggle" onclick="toggleEye('reg-confirm',this)">👁</span>
+        </div>
+        <button type="button" class="auth-btn" id="register-btn" onclick="vngRegister()">CREATE ACCOUNT</button>
+      </form>
+
+      <!-- ── RESET PASSWORD panel ── -->
+      <form class="auth-panel" id="panel-reset" autocomplete="off" onsubmit="return false;">
+        <h2 class="auth-title">RESET PASSWORD</h2>
+        <p class="auth-sub">Enter your email and we'll send a reset link to your inbox.</p>
+        <div class="auth-msg" id="forgot-msg"></div>
+        <div class="auth-field">
+          <label class="auth-label">EMAIL ADDRESS</label>
+          <input type="email" id="forgot-email" class="auth-input" placeholder="your@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <button type="button" class="auth-btn" id="forgot-btn" onclick="vngForgot()">SEND RESET LINK</button>
+        <div class="auth-footer-link" style="margin-top:16px">
+          Remember your password? <a onclick="switchAuthTab('login')">Back to Login</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ══ LOGGED IN: Profile Dashboard ══ -->
+  <div id="acc-in" class="dash-wrap" style="display:none">
+
+    <!-- Hero -->
+    <div class="dash-hero">
+      <div class="dash-av-wrap">
+        <div class="dash-av" id="dash-av"><span id="dash-av-letter">V</span></div>
+        <button class="dash-av-edit" onclick="document.getElementById('av-file').click()" title="Change photo">✏</button>
         <input type="file" id="av-file" accept="image/*" onchange="uploadAvatar(this.files[0])">
-        <div class="av-uploading" id="av-uploading">⟳</div>
+        <div class="dash-av-loading" id="dash-av-loading">⟳</div>
       </div>
       <div>
-        <div class="prof-name" id="prof-name-display">USERNAME</div>
-        <div class="prof-email" id="prof-email-display">user@email.com</div>
-        <div class="prof-since" id="prof-since-display">MEMBER SINCE —</div>
-        <div class="prof-badge">⚡ VNG MEMBER</div>
+        <div class="dash-name" id="dash-name">USERNAME</div>
+        <div class="dash-email" id="dash-email">user@email.com</div>
+        <div class="dash-since" id="dash-since">MEMBER SINCE —</div>
+        <div class="dash-badges">
+          <span class="d-badge">⚡ VNG MEMBER</span>
+          <span class="d-badge pu">🎮 NOVA GENERATION</span>
+        </div>
       </div>
-      <div class="prof-actions">
-        <button class="btn-edit-prof" onclick="toggleEditForm()">✏ EDIT PROFILE</button>
-        <button class="btn-logout-prof" onclick="vngLogout()">🚪 LOGOUT</button>
+      <div class="dash-btns">
+        <button class="btn-edit-p" onclick="toggleEditForm()">✏ EDIT PROFILE</button>
+        <button class="btn-logout-p" onclick="vngLogout()">🚪 LOGOUT</button>
       </div>
     </div>
 
-    <!-- Bio Section -->
-    <div class="prof-section">
-      <div class="prof-sec-h">ABOUT ME</div>
-      <div class="prof-bio-txt empty" id="prof-bio-display">No bio yet — click Edit Profile to add one.</div>
+    <!-- Dashboard grid -->
+    <div class="dash-grid">
 
-      <!-- Edit Form -->
-      <div class="edit-form-wrap" id="edit-form-wrap">
-        <div class="ef-field">
-          <label class="ef-label">USERNAME</label>
-          <input type="text" class="ef-input" id="edit-username" maxlength="20" placeholder="Your gamer tag">
-        </div>
-        <div class="ef-field">
-          <label class="ef-label">BIO</label>
-          <textarea class="ef-textarea" id="edit-bio" rows="3" placeholder="Tell the community about yourself..."></textarea>
-        </div>
-        <div class="ef-actions">
-          <button class="btn-save" onclick="saveProfile()">SAVE CHANGES</button>
-          <button class="btn-cancel-edit" onclick="toggleEditForm()">CANCEL</button>
-          <span class="save-msg" id="save-msg">✓ SAVED</span>
+      <!-- Bio + Edit -->
+      <div class="dash-card full">
+        <div class="dash-card-h">ABOUT ME</div>
+        <div class="dash-bio-txt empty" id="dash-bio">No bio yet — click Edit Profile to add one.</div>
+        <div class="dash-edit-form" id="dash-edit-form">
+          <div class="ef-field" style="margin-top:14px">
+            <label class="ef-label">USERNAME</label>
+            <input type="text" class="ef-input" id="edit-username" maxlength="20" placeholder="Your gamer tag">
+          </div>
+          <div class="ef-field">
+            <label class="ef-label">BIO</label>
+            <textarea class="ef-textarea" id="edit-bio" rows="3" placeholder="Tell the community about yourself..."></textarea>
+          </div>
+          <div class="ef-actions">
+            <button class="btn-save" onclick="saveProfile()">SAVE CHANGES</button>
+            <button class="btn-cancel-edit" onclick="toggleEditForm()">CANCEL</button>
+            <span class="save-msg" id="save-msg">✓ SAVED</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Stats -->
-    <div class="prof-section">
-      <div class="prof-sec-h">ACCOUNT STATS</div>
-      <div class="prof-stats-row">
-        <div class="pstt"><div class="pstt-n">⚡</div><div class="pstt-l">VNG MEMBER</div></div>
-        <div class="pstt"><div class="pstt-n" id="prof-stat-days">0</div><div class="pstt-l">DAYS ACTIVE</div></div>
-        <div class="pstt"><div class="pstt-n">🌐</div><div class="pstt-l">NOVA GENERATION</div></div>
+      <!-- Stats -->
+      <div class="dash-card">
+        <div class="dash-card-h">ACCOUNT STATS</div>
+        <div class="dash-stats">
+          <div class="dst"><div class="dst-n">⚡</div><div class="dst-l">VNG MEMBER</div></div>
+          <div class="dst"><div class="dst-n" id="dash-days">0</div><div class="dst-l">DAYS ACTIVE</div></div>
+          <div class="dst"><div class="dst-n">🎮</div><div class="dst-l">GAMER</div></div>
+        </div>
       </div>
-    </div>
 
+      <!-- Quick links -->
+      <div class="dash-card">
+        <div class="dash-card-h">EXPLORE VNG</div>
+        <div class="dash-quick-links">
+          <div class="dql-item" onclick="showPg('home')"><span class="dql-icon">🏠</span>Home</div>
+          <div class="dql-item" onclick="showPg('projects')"><span class="dql-icon">🎮</span>Projects</div>
+          <div class="dql-item" onclick="showPg('community')"><span class="dql-icon">🌐</span>Community</div>
+          <div class="dql-item" onclick="showPg('vision')"><span class="dql-icon">🚀</span>Vision</div>
+          <div class="dql-item" onclick="showPg('updates')"><span class="dql-icon">📢</span>Updates</div>
+        </div>
+      </div>
+
+      <!-- Account info -->
+      <div class="dash-card full">
+        <div class="dash-card-h">ACCOUNT INFO</div>
+        <div class="dash-settings">
+          <div class="ds-row"><span class="ds-key">EMAIL</span><span class="ds-val" id="acc-email-val">—</span></div>
+          <div class="ds-row"><span class="ds-key">USERNAME</span><span class="ds-val" id="acc-uname-val">—</span></div>
+          <div class="ds-row"><span class="ds-key">MEMBER SINCE</span><span class="ds-val" id="acc-since-val">—</span></div>
+          <div class="ds-row"><span class="ds-key">STATUS</span><span class="ds-val" style="color:#00ff88">● ACTIVE</span></div>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+</div>
+</div>
 
 <!-- ═══ SCRIPTS ═══ -->
 <script>
-// ── Custom cursor
-const cur=document.getElementById('cur'),curdot=document.getElementById('curdot');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;curdot.style.left=mx+'px';curdot.style.top=my+'px';});
-(function tick(){cx+=(mx-cx)*.14;cy+=(my-cy)*.14;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(tick);})();
-document.querySelectorAll('a,button,.qnav-card,.proj-card,.dg-item,.fan-item,.contact-card,.event-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='34px';cur.style.height='34px';cur.style.borderColor='rgba(191,0,255,.8)';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='22px';cur.style.height='22px';cur.style.borderColor='var(--cyan)';});
+/* ── Custom cursor — skip entirely on touch devices ── */
+const isTouchOnly = window.matchMedia('(hover:none)').matches;
+const cur    = document.getElementById('cur');
+const curdot = document.getElementById('curdot');
+if(!isTouchOnly && cur && curdot){
+  let mx=0,my=0,cx=0,cy=0;
+  document.addEventListener('mousemove', e=>{
+    mx=e.clientX; my=e.clientY;
+    curdot.style.left=mx+'px'; curdot.style.top=my+'px';
+  }, {passive:true});
+  (function tick(){
+    cx+=(mx-cx)*.14; cy+=(my-cy)*.14;
+    cur.style.left=cx+'px'; cur.style.top=cy+'px';
+    requestAnimationFrame(tick);
+  })();
+  document.querySelectorAll('a,button,.qnav-card,.proj-card,.dg-item,.fan-item,.contact-card,.event-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='34px';cur.style.height='34px';cur.style.borderColor='rgba(191,0,255,.8)';},{passive:true});
+    el.addEventListener('mouseleave',()=>{cur.style.width='22px';cur.style.height='22px';cur.style.borderColor='var(--cyan)';},{passive:true});
+  });
+} else if(cur && curdot){
+  /* Hide cursor elements on touch devices */
+  cur.style.display='none'; curdot.style.display='none';
+}
+
+/* ── Particles — debounced resize, spatial-bucketed connections ── */
+const canvas = document.getElementById('pcanvas');
+const ctx    = canvas.getContext('2d');
+let   resizeTimer;
+function rsz(){
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  /* Re-place all particles within new bounds */
+  ps.forEach(p=>p.r());
+}
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(rsz, 150); /* debounce 150ms */
+},{passive:true});
+
+class P{
+  constructor(){this.r();}
+  r(){
+    this.x  = Math.random()*canvas.width;
+    this.y  = Math.random()*canvas.height;
+    this.vx = (Math.random()-.5)*.25;
+    this.vy = (Math.random()-.5)*.25;
+    this.s  = Math.random()*1.2+.3;
+    this.a  = Math.random()*.3+.05;
+    this.col= Math.random()>.5?'0,245,255':'191,0,255';
+  }
+  u(){
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.r();
+  }
+  d(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.col},${this.a})`;
+    ctx.fill();
+  }
+}
+
+/* Reduce particle count on mobile for performance */
+const PARTICLE_COUNT = window.innerWidth < 768 ? 40 : 80;
+const ps=[];
+for(let i=0;i<PARTICLE_COUNT;i++) ps.push(new P());
+
+/* Throttle connection drawing — only every 2nd frame */
+let connFrame=0;
+const CONN_DIST=90, CONN_DIST_SQ=CONN_DIST*CONN_DIST;
+function drawConn(){
+  if(++connFrame%2!==0) return; /* skip odd frames */
+  for(let i=0;i<ps.length;i++){
+    for(let j=i+1;j<ps.length;j++){
+      const dx=ps[i].x-ps[j].x, dy=ps[i].y-ps[j].y;
+      const dSq=dx*dx+dy*dy;
+      if(dSq<CONN_DIST_SQ){
+        const alpha=.03*(1-Math.sqrt(dSq)/CONN_DIST);
+        ctx.beginPath();
+        ctx.moveTo(ps[i].x,ps[i].y);
+        ctx.lineTo(ps[j].x,ps[j].y);
+        ctx.strokeStyle=`rgba(0,245,255,${alpha})`;
+        ctx.lineWidth=.4;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+/* Pause animation when tab is hidden to save CPU */
+let animRunning = true;
+document.addEventListener('visibilitychange',()=>{
+  animRunning = !document.hidden;
+  if(animRunning) requestAnimationFrame(anim);
 });
+function anim(){
+  if(!animRunning) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ps.forEach(p=>{p.u();p.d();});
+  drawConn();
+  requestAnimationFrame(anim);
+}
+rsz(); /* initial size */
+anim();
 
-// ── Particles
-const canvas=document.getElementById('pcanvas'),ctx=canvas.getContext('2d');
-function rsz(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-rsz();window.addEventListener('resize',rsz);
-class P{constructor(){this.r();}r(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.s=Math.random()*1.2+.3;this.a=Math.random()*.3+.05;this.col=Math.random()>.5?'0,245,255':'191,0,255';}u(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.r();}d(){ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fillStyle=`rgba(${this.col},${this.a})`;ctx.fill();}}
-const ps=[];for(let i=0;i<100;i++)ps.push(new P());
-function drawConn(){for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(0,245,255,${.03*(1-d/90)})`;ctx.lineWidth=.4;ctx.stroke();}}}
-(function anim(){ctx.clearRect(0,0,canvas.width,canvas.height);ps.forEach(p=>{p.u();p.d();});drawConn();requestAnimationFrame(anim);})();
-
-// ── PAGE SWITCHING
-let revObs;
+/* ── PAGE SWITCHING — per-page observers, CSS transitions, no flicker ── */
+/* Map of per-page IntersectionObservers so they're independent */
+const revObsMap = new Map();
 
 function initReveal(pg){
-  if(revObs) revObs.disconnect();
-  revObs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
-  },{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+  /* Disconnect old observer for this page if any */
+  if(revObsMap.has(pg.id)){
+    revObsMap.get(pg.id).disconnect();
+    revObsMap.delete(pg.id);
+  }
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:.08, rootMargin:'0px 0px -40px 0px'});
+  revObsMap.set(pg.id, obs);
   pg.querySelectorAll('.reveal').forEach(el=>{
     el.classList.remove('visible');
-    revObs.observe(el);
+    obs.observe(el);
   });
-  // immediately trigger visible reveals
+  /* Immediately trigger elements already in viewport */
   setTimeout(()=>{
     pg.querySelectorAll('.reveal').forEach(el=>{
       const r=el.getBoundingClientRect();
-      if(r.top<window.innerHeight&&r.bottom>0) el.classList.add('visible');
+      if(r.top<window.innerHeight && r.bottom>0) el.classList.add('visible');
     });
   },60);
 }
 
 function showPg(id){
-  document.querySelectorAll('.pg-section').forEach(p=>{
-    p.style.opacity='0';
-    p.style.transition='opacity .2s';
+  const sections = document.querySelectorAll('.pg-section');
+  /* Hide all using a CSS class — no inline style spam */
+  sections.forEach(p=>{
+    p.classList.remove('pg-active');
+    p.classList.add('pg-leaving');
   });
+  const target = document.getElementById('pg-'+id);
+  if(!target){
+    console.warn('[VNG] showPg: no element #pg-'+id);
+    sections.forEach(p=>p.classList.remove('pg-leaving'));
+    return;
+  }
   setTimeout(()=>{
-    document.querySelectorAll('.pg-section').forEach(p=>p.classList.remove('pg-active'));
-    const t=document.getElementById('pg-'+id);
-    t.classList.add('pg-active');
-    t.style.opacity='0';
-    t.style.transition='opacity .25s';
-    window.scrollTo(0,0);
-    setTimeout(()=>{t.style.opacity='1';},20);
-    // Nav active state
+    sections.forEach(p=>p.classList.remove('pg-leaving'));
+    target.classList.add('pg-active');
+    window.scrollTo({top:0,behavior:'instant'});
+    /* Nav active state */
     document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
     const na=document.querySelector('.nav-links a[data-page="'+id+'"]');
-    if(na)na.classList.add('active');
-    // Hamburger close
+    if(na) na.classList.add('active');
+    /* Close hamburger */
     document.getElementById('navlinks').classList.remove('open');
-    // Skills
-    if(id==='about') triggerSkills(t);
-    // Counters
-    t.querySelectorAll('.cnt').forEach(el=>{
+    /* Skills */
+    if(id==='about') triggerSkills(target);
+    /* Counters — only animate once each visit */
+    target.querySelectorAll('.cnt').forEach(el=>{
       if(!el.dataset.done){
         el.dataset.done='1';
         const v=parseFloat(el.dataset.val);
         animCount(el,v,v>=1000?'+':'',false);
       }
     });
-    initReveal(t);
-  },200);
+    initReveal(target);
+  },180);
 }
 
-// Set home active on load
-document.querySelector('.nav-links a[data-page="home"]').classList.add('active');
-
-// ── Counter animation
+/* ── Counter animation ── */
 function animCount(el,target,suffix,isFloat){
-  const dur=1800,start=performance.now();
+  const dur=1800, start=performance.now();
   (function frame(now){
-    const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+    const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
     const v=e*target;
     el.textContent=(isFloat?v.toFixed(1):(v>=1000?Math.floor(v).toLocaleString():Math.floor(v)))+suffix;
-    if(p<1)requestAnimationFrame(frame);
+    if(p<1) requestAnimationFrame(frame);
   })(start);
 }
-// trigger counters on home load
+/* Trigger counters on home load */
 document.querySelectorAll('#pg-home .cnt').forEach(el=>{
   const v=parseFloat(el.dataset.val);
   animCount(el,v,v>=1000?'+':'',false);
   el.dataset.done='1';
 });
 
-// ── Skills animate
+/* ── Skills animate ── */
 function triggerSkills(pg){
   pg.querySelectorAll('.skill-fill').forEach(bar=>{
     const w=bar.dataset.w;
     bar.style.width='0';
-    setTimeout(()=>{bar.style.width=w+'%';},200);
+    setTimeout(()=>{ bar.style.width=w+'%'; },200);
   });
 }
 
-// ── Project filter
+/* ── Project filter ── */
 function filterProj(btn,cat){
   document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1837,314 +1979,530 @@ function filterProj(btn,cat){
   });
 }
 
-// ── Hamburger
+/* ── Hamburger ── */
 document.getElementById('hamburger').onclick=()=>document.getElementById('navlinks').classList.toggle('open');
 
-// ── Init home reveal
+/* Set home active on load */
+document.querySelector('.nav-links a[data-page="home"]').classList.add('active');
+
+/* ── Init home reveal ── */
 initReveal(document.getElementById('pg-home'));
 
-/* ═══════════════════════════════════════════════════════
-   FIREBASE AUTHENTICATION SYSTEM
-   ─────────────────────────────────────────────────────
-   SETUP REQUIRED:
-   1. Go to https://console.firebase.google.com
-   2. Create a project → Enable Email/Password Auth
-   3. Create Firestore Database (test mode to start)
-   4. Create Storage bucket
-   5. Replace the config below with your own values
-═══════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════
+   FIREBASE — VNG AUTH SYSTEM
+   Guarded init: typeof check prevents "firebase is not
+   defined" crash when CDN fails to load (file://, blocker,
+   network error). All Firebase globals declared at top
+   scope so auth functions can reference them safely.
+════════════════════════════════════════════════════ */
 
-const firebaseConfig = {
-  apiKey:            "AIzaSyCA0GZetrGCPHv4251w1jBHLW7XfCM1hr0",
-  authDomain:        "vng-ba0d6.firebaseapp.com",
-  projectId:         "vng-ba0d6",
-  storageBucket:     "vng-ba0d6.firebasestorage.app",
-  messagingSenderId: "440104586580",
-  appId:             "1:440104586580:web:5a6ebfb60a322e5b038cc1"
-};
+/* Declare at outer scope so all functions below can reference them */
+let fbAuth    = null;
+let fbDb      = null;
+let fbStorage = null;
+let fbReady   = false;
 
-// Init Firebase
-let fbApp, fbAuth, fbDb, fbStorage;
-try {
-  fbApp     = firebase.initializeApp(firebaseConfig);
-  fbAuth    = firebase.auth();
-  fbDb      = firebase.firestore();
-  fbStorage = firebase.storage();
-} catch(e) {
-  console.warn('[VNG Auth] Firebase not configured yet:', e.message);
+/* ── Guard: show clear error if SDK didn't load ── */
+if(typeof firebase === 'undefined' || window._fbLoadErr) {
+  console.error(
+    '[VNG] FATAL: Firebase SDK not loaded.\n' +
+    'Possible causes:\n' +
+    '  1. File opened as file:// — serve over HTTP (e.g. Live Server)\n' +
+    '  2. Ad-blocker / Brave Shields blocking gstatic.com\n' +
+    '  3. No internet connection when page loaded\n' +
+    '  4. CDN URL typo or version does not exist\n' +
+    'Fix: open DevTools → Network tab → filter "firebase" → check for (failed) or (blocked)'
+  );
+  /* Show a non-intrusive banner on the account page only */
+  document.addEventListener('DOMContentLoaded', () => {
+    const accOut = document.getElementById('acc-out');
+    if(accOut) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.4);color:#ff6080;font-family:monospace;font-size:12px;padding:14px 18px;border-radius:2px;margin:20px 0;line-height:1.6;';
+      banner.innerHTML =
+        '<strong>⚠ AUTH UNAVAILABLE</strong><br>' +
+        'Firebase SDK failed to load. Login/register is disabled.<br>' +
+        '<small>If using a local file, open with a live server (not file://).<br>' +
+        'If online, disable your ad-blocker for this site.</small>';
+      accOut.prepend(banner);
+    }
+  });
+} else {
+  /* ── Normal init path — SDK loaded successfully ── */
+  try {
+    /* Prevent "Firebase App named [DEFAULT] already exists" on hot-reload */
+    if(!firebase.apps.length) {
+      const firebaseConfig = {
+        apiKey:            "AIzaSyCA0GZetrGCPHv4251w1jBHLW7XfCM1hr0",
+        authDomain:        "vng-ba0d6.firebaseapp.com",
+        projectId:         "vng-ba0d6",
+        storageBucket:     "vng-ba0d6.firebasestorage.app",
+        messagingSenderId: "440104586580",
+        appId:             "1:440104586580:web:5a6ebfb60a322e5b038cc1",
+        measurementId:     "G-0E3PTSSN17"
+      };
+      firebase.initializeApp(firebaseConfig);
+    }
+    fbAuth    = firebase.auth();
+    fbDb      = firebase.firestore();
+    fbStorage = firebase.storage();
+    fbReady   = true;
+    console.log('[VNG Auth] Firebase connected ✓  app:', firebase.app().name);
+  } catch(e) {
+    console.error('[VNG] Firebase initializeApp failed:', e.message);
+  }
 }
 
-/* ── AUTH STATE LISTENER ── */
-if(fbAuth) {
-  fbAuth.onAuthStateChanged(user => {
-    if(user) {
-      showNavUser(user);
-      loadProfileData(user);
-    } else {
-      showNavLogin();
+/* Simple in-memory cache — avoids redundant Firestore reads */
+let _userDataCache = null;
+let _cachedUid     = null;
+function clearUserCache(){ _userDataCache=null; _cachedUid=null; }
+async function getCachedUserData(uid){
+  if(_cachedUid===uid && _userDataCache) return _userDataCache;
+  if(!fbDb) return {};
+  try {
+    const snap = await fbDb.collection('users').doc(uid).get();
+    _userDataCache = snap.exists ? snap.data() : {};
+    _cachedUid = uid;
+    return _userDataCache;
+  } catch(e) {
+    console.warn('[VNG Cache] Firestore read failed:', e.message);
+    return {};
+  }
+}
+
+function clearAuthPersistence() {
+  try { window.localStorage.clear(); } catch (e) {}
+  try { window.sessionStorage.clear(); } catch (e) {}
+}
+
+function resetAuthMessage(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.className = 'auth-msg';
+    el.textContent = '';
+  }
+}
+
+function resetAllAuthMessages() {
+  ['login-msg', 'register-msg', 'forgot-msg'].forEach(resetAuthMessage);
+}
+
+function resetAuthInputs() {
+  const ids = ['reg-username', 'reg-email', 'reg-password', 'reg-confirm', 'login-email', 'login-password', 'forgot-email'];
+  ids.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = '';
+      field.setAttribute('autocomplete', 'off');
     }
+  });
+
+  const strengthFill = document.getElementById('strength-fill');
+  const strengthLabel = document.getElementById('strength-label');
+  if (strengthFill) {
+    strengthFill.style.width = '0%';
+    strengthFill.style.background = 'transparent';
+  }
+  if (strengthLabel) {
+    strengthLabel.textContent = '';
+    strengthLabel.style.color = '';
+  }
+}
+
+function resetDashboardState() {
+  setText('dash-name', 'USERNAME');
+  setText('dash-email', 'user@email.com');
+  setText('dash-since', 'MEMBER SINCE —');
+  setText('acc-email-val', '—');
+  setText('acc-uname-val', '—');
+  setText('acc-since-val', '—');
+  setText('dash-days', '0');
+
+  const bioEl = document.getElementById('dash-bio');
+  if (bioEl) {
+    bioEl.textContent = 'No bio yet — click Edit Profile to add one.';
+    bioEl.classList.add('empty');
+  }
+
+  const avEl = document.getElementById('dash-av');
+  if (avEl) {
+    avEl.innerHTML = '<span id="dash-av-letter">V</span>';
+  }
+
+  const editUsername = document.getElementById('edit-username');
+  const editBio = document.getElementById('edit-bio');
+  if (editUsername) editUsername.value = '';
+  if (editBio) editBio.value = '';
+
+  const editForm = document.getElementById('dash-edit-form');
+  if (editForm) editForm.classList.remove('open');
+
+  const saveMsg = document.getElementById('save-msg');
+  if (saveMsg) {
+    saveMsg.classList.remove('show', 'error');
+    saveMsg.textContent = '';
+  }
+
+  const avatarFile = document.getElementById('av-file');
+  if (avatarFile) avatarFile.value = '';
+
+  const avatarLoading = document.getElementById('dash-av-loading');
+  if (avatarLoading) avatarLoading.style.display = 'none';
+}
+
+function resetAccountUI() {
+  resetAllAuthMessages();
+  resetAuthInputs();
+  resetDashboardState();
+  switchAuthTab('login');
+}
+
+let authLogoutNotice = '';
+let authLogoutNoticeTimer = null;
+
+function setLogoutNotice(message) {
+  authLogoutNotice = message;
+  if (authLogoutNoticeTimer) {
+    clearTimeout(authLogoutNoticeTimer);
+  }
+  authLogoutNoticeTimer = setTimeout(() => {
+    authLogoutNotice = '';
+    resetAuthMessage('login-msg');
+    authLogoutNoticeTimer = null;
+  }, 3500);
+}
+
+function redirectToLogin(message = '') {
+  showPg('account');
+  resetAccountUI();
+  if (message) {
+    showAuthMsg('login-msg', message, 'success');
+  }
+}
+
+/* ── Auth state ── */
+if(fbReady && fbAuth) {
+  fbAuth.onAuthStateChanged(user => {
+    updateNavIcon(user);
+    if(!user) {
+      clearUserCache();
+      clearAuthPersistence();
+    }
+    const acc = document.getElementById('pg-account');
+    if(acc && acc.classList.contains('pg-active')) renderAccountPage(user);
   });
 }
 
-/* ── NAV AUTH CONTROLS ── */
-function showNavLogin() {
-  document.getElementById('btn-nav-login').style.display = '';
-  document.getElementById('nav-user-wrap').style.display = 'none';
-}
-function showNavUser(user) {
-  document.getElementById('btn-nav-login').style.display = 'none';
-  const wrap = document.getElementById('nav-user-wrap');
-  wrap.style.display = '';
-  // Set name
-  const uname = user.displayName || user.email.split('@')[0];
-  document.getElementById('nav-uname-txt').textContent = uname.toUpperCase();
-  // Set avatar
-  if(user.photoURL) {
-    document.getElementById('nav-av-icon').innerHTML = `<img src="${user.photoURL}" alt="av">`;
-  } else {
-    document.getElementById('nav-av-icon').innerHTML = `<span>${uname[0].toUpperCase()}</span>`;
-  }
-}
-function toggleNavMenu() {
-  const dd = document.getElementById('nav-dropdown');
-  const ch = document.getElementById('nav-chevron');
-  dd.classList.toggle('open');
-  ch.classList.toggle('open');
-}
-function closeNavMenu() {
-  document.getElementById('nav-dropdown').classList.remove('open');
-  document.getElementById('nav-chevron').classList.remove('open');
-}
-document.addEventListener('click', e => {
-  const wrap = document.getElementById('nav-user-wrap');
-  if(wrap && !wrap.contains(e.target)) closeNavMenu();
+window.addEventListener('pageshow', () => {
+  const acc = document.getElementById('pg-account');
+  if (!acc || !acc.classList.contains('pg-active')) return;
+  const user = (fbReady && fbAuth) ? fbAuth.currentUser : null;
+  renderAccountPage(user);
 });
 
-/* ── HELPER: show message ── */
-function authMsg(id, text, type) {
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.className = 'auth-msg ' + type;
-  el.textContent = text;
+/* ── Override showPg to handle account page ── */
+const _origShowPg = showPg;
+window.showPg = function(id) {
+  _origShowPg(id);
+  if(id === 'account') {
+    const user = (fbReady && fbAuth) ? fbAuth.currentUser : null;
+    renderAccountPage(user);
+  }
+};
+
+/* ── Nav icon ── */
+function updateNavIcon(user) {
+  const btn = document.getElementById('nav-acct-btn');
+  const ico = document.getElementById('nav-acct-ico');
+  if(!btn || !ico) return;
+  if(user) {
+    btn.classList.add('online');
+    const name = user.displayName || user.email.split('@')[0];
+    if(user.photoURL) {
+      ico.innerHTML = `<img class="nav-acct-img" src="${user.photoURL}" alt="av">`;
+    } else {
+      ico.innerHTML = `<div class="nav-acct-ini">${name[0].toUpperCase()}</div>`;
+    }
+  } else {
+    btn.classList.remove('online');
+    ico.innerHTML = '👤';
+  }
 }
-function clearMsg(id) {
-  const el = document.getElementById(id);
-  if(el) { el.className = 'auth-msg'; el.textContent = ''; }
+
+/* ── Render account page ── */
+function renderAccountPage(user) {
+  const out = document.getElementById('acc-out');
+  const inn = document.getElementById('acc-in');
+  if(!out || !inn) return;
+  if(user) {
+    if (authLogoutNoticeTimer) {
+      clearTimeout(authLogoutNoticeTimer);
+      authLogoutNoticeTimer = null;
+    }
+    authLogoutNotice = '';
+    clearUserCache();
+    out.style.display = 'none';
+    inn.style.display = 'block';
+    loadDashboard(user);
+  } else {
+    resetDashboardState();
+    resetAuthInputs();
+    out.style.display = 'flex';
+    inn.style.display = 'none';
+    switchAuthTab('login', { preserveMessages: !!authLogoutNotice });
+    if (authLogoutNotice) {
+      showAuthMsg('login-msg', authLogoutNotice, 'success');
+    } else {
+      resetAllAuthMessages();
+    }
+  }
 }
-function setLoading(btnId, loading, text) {
-  const btn = document.getElementById(btnId);
-  if(!btn) return;
-  btn.disabled = loading;
-  btn.textContent = loading ? '⟳ PLEASE WAIT...' : text;
+
+/* ── Switch auth tab ── */
+function switchAuthTab(name, options = {}) {
+  const preserveMessages = !!options.preserveMessages;
+  ['login','register','reset'].forEach(t => {
+    document.getElementById('panel-' + t).classList.remove('on');
+    document.getElementById('tab-'   + t).classList.remove('on');
+  });
+  document.getElementById('panel-' + name).classList.add('on');
+  document.getElementById('tab-'   + name).classList.add('on');
+  if (!preserveMessages) {
+    ['login-msg','register-msg','forgot-msg'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){ el.className='auth-msg'; el.textContent=''; }
+    });
+  }
 }
+
+/* ── Load profile dashboard — uses cache ── */
+async function loadDashboard(user) {
+  try {
+    const d      = await getCachedUserData(user.uid);
+    const uname  = d.username || user.displayName || user.email.split('@')[0];
+    const bio    = d.bio      || '';
+    const photo  = d.photoURL || user.photoURL || '';
+    const joined = d.joinDate || new Date().toLocaleDateString('en-US',{year:'numeric',month:'long'});
+
+    setText('dash-name',     uname.toUpperCase());
+    setText('dash-email',    user.email);
+    setText('dash-since',    'MEMBER SINCE ' + joined.toUpperCase());
+    setText('acc-email-val', user.email);
+    setText('acc-uname-val', uname);
+    setText('acc-since-val', joined);
+
+    const bioEl = document.getElementById('dash-bio');
+    if(bioEl){
+      if(bio){ bioEl.textContent=bio; bioEl.classList.remove('empty'); }
+      else   { bioEl.textContent='No bio yet — click Edit Profile to add one.'; bioEl.classList.add('empty'); }
+    }
+    const avEl = document.getElementById('dash-av');
+    if(avEl){
+      if(photo) avEl.innerHTML=`<img src="${photo}" alt="avatar" style="width:100%;height:100%;object-fit:cover;">`;
+      else      avEl.innerHTML=`<span id="dash-av-letter">${uname[0].toUpperCase()}</span>`;
+    }
+    const eu = document.getElementById('edit-username');
+    const eb = document.getElementById('edit-bio');
+    if(eu) eu.value = uname;
+    if(eb) eb.value = bio;
+    if(d.createdAt){
+      const days = Math.floor((Date.now() - d.createdAt.toDate().getTime()) / 86400000);
+      setText('dash-days', days||1);
+    }
+  } catch(e){ console.warn('[VNG Dashboard]', e.message); }
+}
+
+function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
 
 /* ── LOGIN ── */
 async function vngLogin() {
-  if(!fbAuth) return authMsg('login-msg','Firebase not configured yet. Add your config.','error');
+  if(!fbReady || !fbAuth) return showAuthMsg('login-msg','Auth unavailable — check your connection or disable ad-blocker.','error');
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-password').value;
   clearMsg('login-msg');
-  if(!email || !pass) return authMsg('login-msg','Please fill in all fields.','error');
-  setLoading('login-btn', true, 'ENTER THE PORTAL');
+  if(!email || !pass) return showAuthMsg('login-msg','Please fill in all fields.','error');
+  setBtn('login-btn', true, '⚡ ENTER THE PORTAL');
   try {
     await fbAuth.signInWithEmailAndPassword(email, pass);
-    showPg('profile');
+    renderAccountPage(fbAuth.currentUser);
   } catch(e) {
-    authMsg('login-msg', getFriendlyError(e.code), 'error');
+    showAuthMsg('login-msg', friendlyErr(e.code), 'error');
+  } finally {
+    setBtn('login-btn', false, '⚡ ENTER THE PORTAL');
   }
-  setLoading('login-btn', false, 'ENTER THE PORTAL');
 }
 
 /* ── REGISTER ── */
 async function vngRegister() {
-  if(!fbAuth) return authMsg('register-msg','Firebase not configured yet. Add your config.','error');
-  const username = document.getElementById('reg-username').value.trim();
-  const email    = document.getElementById('reg-email').value.trim();
-  const pass     = document.getElementById('reg-password').value;
-  const confirm  = document.getElementById('reg-confirm').value;
+  if(!fbReady || !fbAuth) return showAuthMsg('register-msg','Auth unavailable — check your connection or disable ad-blocker.','error');
+  const uname = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-password').value;
+  const conf  = document.getElementById('reg-confirm').value;
   clearMsg('register-msg');
-  if(!username || !email || !pass || !confirm) return authMsg('register-msg','Please fill in all fields.','error');
-  if(username.length < 3) return authMsg('register-msg','Username must be at least 3 characters.','error');
-  if(pass !== confirm) return authMsg('register-msg','Passwords do not match.','error');
-  if(pass.length < 6) return authMsg('register-msg','Password must be at least 6 characters.','error');
-  setLoading('register-btn', true, 'CREATE ACCOUNT');
+  if(!uname||!email||!pass||!conf) return showAuthMsg('register-msg','Please fill in all fields.','error');
+  if(uname.length < 3)             return showAuthMsg('register-msg','Username must be at least 3 characters.','error');
+  if(pass !== conf)                return showAuthMsg('register-msg','Passwords do not match.','error');
+  if(pass.length < 6)              return showAuthMsg('register-msg','Password must be at least 6 characters.','error');
+  setBtn('register-btn', true, 'CREATE ACCOUNT');
   try {
     const cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
-    await cred.user.updateProfile({ displayName: username });
-    await fbDb.collection('users').doc(cred.user.uid).set({
-      username:   username,
-      email:      email,
-      bio:        '',
-      photoURL:   '',
-      createdAt:  firebase.firestore.FieldValue.serverTimestamp(),
-      joinDate:   new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
-    });
-    showPg('profile');
+    await cred.user.updateProfile({ displayName: uname });
+    const userData = {
+      username: uname, email, bio: '', photoURL: '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      joinDate:  new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+    };
+    await fbDb.collection('users').doc(cred.user.uid).set(userData);
+    clearUserCache();
+    renderAccountPage(fbAuth.currentUser);
   } catch(e) {
-    authMsg('register-msg', getFriendlyError(e.code), 'error');
+    showAuthMsg('register-msg', friendlyErr(e.code), 'error');
+  } finally {
+    setBtn('register-btn', false, 'CREATE ACCOUNT');
   }
-  setLoading('register-btn', false, 'CREATE ACCOUNT');
 }
 
 /* ── FORGOT PASSWORD ── */
 async function vngForgot() {
-  if(!fbAuth) return authMsg('forgot-msg','Firebase not configured yet. Add your config.','error');
+  if(!fbReady || !fbAuth) return showAuthMsg('forgot-msg','Auth unavailable — check your connection or disable ad-blocker.','error');
   const email = document.getElementById('forgot-email').value.trim();
   clearMsg('forgot-msg');
-  if(!email) return authMsg('forgot-msg','Please enter your email address.','error');
-  setLoading('forgot-btn', true, 'SEND RESET LINK');
+  if(!email) return showAuthMsg('forgot-msg','Please enter your email address.','error');
+  setBtn('forgot-btn', true, 'SEND RESET LINK');
   try {
     await fbAuth.sendPasswordResetEmail(email);
-    authMsg('forgot-msg','Reset link sent! Check your inbox.','success');
+    showAuthMsg('forgot-msg','Reset link sent! Check your inbox.','success');
   } catch(e) {
-    authMsg('forgot-msg', getFriendlyError(e.code), 'error');
+    showAuthMsg('forgot-msg', friendlyErr(e.code), 'error');
+  } finally {
+    setBtn('forgot-btn', false, 'SEND RESET LINK');
   }
-  setLoading('forgot-btn', false, 'SEND RESET LINK');
 }
 
 /* ── LOGOUT ── */
 async function vngLogout() {
-  if(!fbAuth) return;
-  await fbAuth.signOut();
-  showPg('home');
-}
-
-/* ── LOAD PROFILE ── */
-async function loadProfileData(user) {
+  clearUserCache();
+  if(!fbReady || !fbAuth){ showPg('home'); return; }
   try {
-    const snap = await fbDb.collection('users').doc(user.uid).get();
-    const data = snap.exists ? snap.data() : {};
-    const uname = data.username || user.displayName || user.email.split('@')[0];
-    const bio   = data.bio || '';
-    const photo = data.photoURL || user.photoURL || '';
-    const joined = data.joinDate || 'Unknown';
-
-    // Update display
-    document.getElementById('prof-name-display').textContent  = uname.toUpperCase();
-    document.getElementById('prof-email-display').textContent = user.email;
-    document.getElementById('prof-since-display').textContent = 'MEMBER SINCE ' + joined.toUpperCase();
-
-    // Bio
-    const bioEl = document.getElementById('prof-bio-display');
-    if(bio) { bioEl.textContent = bio; bioEl.classList.remove('empty'); }
-    else { bioEl.textContent = 'No bio yet — click Edit Profile to add one.'; bioEl.classList.add('empty'); }
-
-    // Avatar
-    if(photo) {
-      document.getElementById('prof-av-hex').innerHTML = `<img src="${photo}" alt="avatar">`;
-    } else {
-      document.getElementById('prof-av-hex').innerHTML = `<span id="prof-av-letter">${uname[0].toUpperCase()}</span>`;
-    }
-
-    // Edit form defaults
-    document.getElementById('edit-username').value = uname;
-    document.getElementById('edit-bio').value = bio;
-
-    // Days active
-    if(data.createdAt) {
-      const days = Math.floor((Date.now() - data.createdAt.toDate().getTime()) / 86400000);
-      document.getElementById('prof-stat-days').textContent = days || 0;
-    }
-
-    // Nav
-    showNavUser(user);
+    setLogoutNotice('You have been signed out successfully.');
+    await fbAuth.signOut();
+    clearAuthPersistence();
+    showPg('account');
   } catch(e) {
-    console.warn('[VNG Profile] Load error:', e.message);
+    console.error('[VNG Logout]', e.message);
+    clearAuthPersistence();
+    showPg('account');
   }
 }
 
 /* ── SAVE PROFILE ── */
 async function saveProfile() {
-  if(!fbAuth || !fbAuth.currentUser) return;
-  const uid      = fbAuth.currentUser.uid;
-  const username = document.getElementById('edit-username').value.trim();
-  const bio      = document.getElementById('edit-bio').value.trim();
-  if(!username) return;
+  if(!fbReady || !fbAuth || !fbAuth.currentUser) return;
+  const uid   = fbAuth.currentUser.uid;
+  const uname = document.getElementById('edit-username').value.trim();
+  const bio   = document.getElementById('edit-bio').value.trim();
+  if(!uname) return;
+  const saveBtn = document.querySelector('[onclick="saveProfile()"]');
+  if(saveBtn){ saveBtn.disabled=true; saveBtn.textContent='⟳ SAVING...'; }
   try {
-    await fbDb.collection('users').doc(uid).update({ username, bio });
-    await fbAuth.currentUser.updateProfile({ displayName: username });
-    loadProfileData(fbAuth.currentUser);
+    await fbDb.collection('users').doc(uid).update({ username: uname, bio });
+    await fbAuth.currentUser.updateProfile({ displayName: uname });
+    clearUserCache();
+    await loadDashboard(fbAuth.currentUser);
+    updateNavIcon(fbAuth.currentUser);
     toggleEditForm();
-    const msg = document.getElementById('save-msg');
-    msg.classList.add('show');
-    setTimeout(() => msg.classList.remove('show'), 2000);
+    const sm = document.getElementById('save-msg');
+    if(sm){ sm.classList.add('show'); setTimeout(()=>sm.classList.remove('show'), 2000); }
   } catch(e) {
     console.error('[VNG Save]', e.message);
+    const sm = document.getElementById('save-msg');
+    if(sm){ sm.textContent='Save failed. Try again.'; sm.classList.add('show','error'); setTimeout(()=>{ sm.classList.remove('show','error'); sm.textContent=''; }, 3000); }
+  } finally {
+    if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='SAVE CHANGES'; }
   }
 }
 
 /* ── UPLOAD AVATAR ── */
 async function uploadAvatar(file) {
-  if(!file || !fbAuth || !fbAuth.currentUser || !fbStorage) return;
+  if(!file || !fbReady || !fbAuth || !fbAuth.currentUser || !fbStorage) return;
   const uid = fbAuth.currentUser.uid;
-  const uploading = document.getElementById('av-uploading');
-  uploading.style.display = 'flex';
+  const ld  = document.getElementById('dash-av-loading');
+  if(ld) ld.style.display='flex';
   try {
     const ref = fbStorage.ref(`avatars/${uid}/profile.jpg`);
     await ref.put(file);
     const url = await ref.getDownloadURL();
     await fbDb.collection('users').doc(uid).update({ photoURL: url });
     await fbAuth.currentUser.updateProfile({ photoURL: url });
-    document.getElementById('prof-av-hex').innerHTML = `<img src="${url}" alt="avatar">`;
-    document.getElementById('nav-av-icon').innerHTML = `<img src="${url}" alt="av">`;
-  } catch(e) {
-    console.error('[VNG Upload]', e.message);
-  }
-  uploading.style.display = 'none';
+    clearUserCache();
+    document.getElementById('dash-av').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+    updateNavIcon(fbAuth.currentUser);
+  } catch(e){ console.error('[VNG Upload]', e.message); }
+  finally { if(ld) ld.style.display='none'; }
 }
 
 /* ── TOGGLE EDIT FORM ── */
-function toggleEditForm() {
-  document.getElementById('edit-form-wrap').classList.toggle('open');
+function toggleEditForm(){
+  document.getElementById('dash-edit-form').classList.toggle('open');
 }
 
 /* ── PASSWORD STRENGTH ── */
-function checkStrength(val) {
-  const fill  = document.getElementById('strength-fill');
-  const label = document.getElementById('strength-label');
+function checkStrength(val){
+  const fill = document.getElementById('strength-fill');
+  const lbl  = document.getElementById('strength-label');
   if(!fill) return;
-  let score = 0;
-  if(val.length >= 6) score++;
-  if(val.length >= 10) score++;
-  if(/[A-Z]/.test(val)) score++;
-  if(/[0-9]/.test(val)) score++;
-  if(/[^A-Za-z0-9]/.test(val)) score++;
-  const levels = [
-    { w:'0%',   c:'transparent',      t:'' },
-    { w:'25%',  c:'#ff3c3c',          t:'WEAK' },
-    { w:'50%',  c:'#ff8c00',          t:'FAIR' },
-    { w:'75%',  c:'#ffd700',          t:'GOOD' },
-    { w:'100%', c:'#00ff88',          t:'STRONG' },
-  ];
-  const l = levels[Math.min(score, 4)];
-  fill.style.width = l.w;
-  fill.style.background = l.c;
-  label.textContent = l.t;
-  label.style.color = l.c;
+  let s=0;
+  if(val.length>=6)  s++;
+  if(val.length>=10) s++;
+  if(/[A-Z]/.test(val)) s++;
+  if(/[0-9]/.test(val)) s++;
+  if(/[^A-Za-z0-9]/.test(val)) s++;
+  const lvl=[
+    {w:'0%',  c:'transparent',t:''},
+    {w:'25%', c:'#ff3c3c',    t:'WEAK'},
+    {w:'50%', c:'#ff8c00',    t:'FAIR'},
+    {w:'75%', c:'#ffd700',    t:'GOOD'},
+    {w:'100%',c:'#00ff88',    t:'STRONG'},
+  ][Math.min(s,4)];
+  fill.style.width=lvl.w; fill.style.background=lvl.c;
+  lbl.textContent=lvl.t;  lbl.style.color=lvl.c;
 }
 
-/* ── TOGGLE PASSWORD VISIBILITY ── */
-function toggleEye(inputId, btn) {
-  const inp = document.getElementById(inputId);
+/* ── TOGGLE EYE ── */
+function toggleEye(id, btn){
+  const inp=document.getElementById(id);
   if(!inp) return;
-  if(inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-  else { inp.type = 'password'; btn.textContent = '👁'; }
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🙈';
 }
 
-/* ── FRIENDLY ERROR MESSAGES ── */
-function getFriendlyError(code) {
-  const map = {
-    'auth/user-not-found':      'No account found with this email.',
-    'auth/wrong-password':      'Incorrect password. Try again.',
-    'auth/email-already-in-use':'This email is already registered.',
-    'auth/invalid-email':       'Please enter a valid email address.',
-    'auth/weak-password':       'Password must be at least 6 characters.',
-    'auth/too-many-requests':   'Too many attempts. Please try again later.',
+/* ── HELPERS ── */
+function showAuthMsg(id, txt, type){
+  const el=document.getElementById(id);
+  if(el){ el.className='auth-msg '+type; el.textContent=txt; }
+}
+function clearMsg(id){
+  const el=document.getElementById(id);
+  if(el){ el.className='auth-msg'; el.textContent=''; }
+}
+function setBtn(id, loading, label){
+  const b=document.getElementById(id);
+  if(b){ b.disabled=loading; b.textContent=loading?'⟳ PLEASE WAIT...':label; }
+}
+function friendlyErr(code){
+  return {
+    'auth/user-not-found':        'No account found with this email.',
+    'auth/wrong-password':        'Incorrect password. Try again.',
+    'auth/invalid-credential':    'Invalid email or password.',
+    'auth/email-already-in-use':  'This email is already registered.',
+    'auth/invalid-email':         'Please enter a valid email address.',
+    'auth/weak-password':         'Password must be at least 6 characters.',
+    'auth/too-many-requests':     'Too many attempts. Try again later.',
     'auth/network-request-failed':'Network error. Check your connection.',
-  };
-  return map[code] || 'Something went wrong. Please try again.';
+  }[code] || 'Something went wrong. Please try again.';
 }
-
 </script>
 </body>
 </html>
