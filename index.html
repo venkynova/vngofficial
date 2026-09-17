@@ -41,7 +41,7 @@ nav{background:rgba(3,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px soli
 .nav-links a.active,.nav-links a:hover{color:var(--cyan);border-color:rgba(0,245,255,.2);background:rgba(0,245,255,.04);}
 
 /* CURSOR — hidden on touch devices via JS; will-change for GPU layer */
-#cur,#curdot{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%);will-change:left,top;}
+#cur,#curdot{position:fixed;pointer-events:none;z-index:10002;border-radius:50%;transform:translate(-50%,-50%);will-change:left,top;}
 #cur{width:22px;height:22px;border:1.5px solid var(--cyan);transition:width .2s,height .2s,border-color .2s;}
 #curdot{width:4px;height:4px;background:var(--cyan);}
 @media(hover:none){#cur,#curdot{display:none;}}
@@ -564,6 +564,330 @@ footer{
   footer{padding:40px 24px 24px;}
 }
 
+/* ═══════════════════════════════════
+   VNG SEARCH BAR
+═══════════════════════════════════ */
+.vng-search-wrap{
+  position:relative;
+  flex:0 1 260px;
+  min-width:160px;
+}
+.vng-search-inner{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.vng-search-icon{
+  position:absolute;
+  left:11px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:12px;
+  color:rgba(0,245,255,.5);
+  pointer-events:none;
+  z-index:1;
+  transition:color .25s;
+}
+.vng-search-wrap:focus-within .vng-search-icon{
+  color:var(--cyan);
+}
+#vng-search-input{
+  width:100%;
+  background:rgba(0,245,255,.04);
+  border:1px solid rgba(0,245,255,.18);
+  border-radius:0;
+  color:var(--t1);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  padding:8px 14px 8px 32px;
+  outline:none;
+  transition:border-color .25s,background .25s,box-shadow .25s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  cursor:none;
+}
+#vng-search-input::placeholder{
+  color:rgba(0,245,255,.3);
+  letter-spacing:2px;
+}
+#vng-search-input:focus{
+  border-color:rgba(0,245,255,.55);
+  background:rgba(0,245,255,.07);
+  box-shadow:0 0 18px rgba(0,245,255,.12),inset 0 0 8px rgba(0,245,255,.04);
+}
+/* Animated corner accents */
+.vng-search-inner::before,
+.vng-search-inner::after{
+  content:'';
+  position:absolute;
+  width:6px;height:6px;
+  border-color:var(--purple);
+  border-style:solid;
+  opacity:0;
+  transition:opacity .25s;
+  pointer-events:none;
+  z-index:2;
+}
+.vng-search-inner::before{
+  top:-1px;left:-1px;
+  border-width:1px 0 0 1px;
+}
+.vng-search-inner::after{
+  bottom:-1px;right:-1px;
+  border-width:0 1px 1px 0;
+}
+.vng-search-wrap:focus-within .vng-search-inner::before,
+.vng-search-wrap:focus-within .vng-search-inner::after{
+  opacity:1;
+}
+/* ── Dropdown container ── */
+#vng-search-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:360px;
+  background:rgba(3,5,8,.98);
+  border:1px solid rgba(0,245,255,.18);
+  border-top:2px solid rgba(191,0,255,.5);
+  box-shadow:0 12px 50px rgba(0,0,0,.85),0 0 30px rgba(0,245,255,.07),0 0 60px rgba(191,0,255,.04);
+  z-index:9990;
+  display:none;
+  overflow:hidden;
+  max-height:480px;
+  overflow-y:auto;
+  pointer-events:auto;
+  /* clip-path removed — it clips pointer-events and breaks clicks on items */
+}
+#vng-search-dropdown::-webkit-scrollbar{width:2px;}
+#vng-search-dropdown::-webkit-scrollbar-thumb{background:rgba(0,245,255,.3);}
+#vng-search-dropdown.vng-drop-open{
+  display:block;
+  animation:vngDropIn .18s ease both;
+}
+@keyframes vngDropIn{
+  from{opacity:0;transform:translateY(-8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+/* ── Category section header ── */
+.vng-drop-cat{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:3px;
+  padding:9px 14px 6px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  position:sticky;top:0;
+  background:rgba(3,5,8,.99);
+  z-index:2;
+  pointer-events:none;
+}
+.vng-drop-cat.cat-pages{color:var(--cyan);}
+.vng-drop-cat.cat-users{color:var(--purple);}
+.vng-drop-cat.cat-profiles{color:var(--gold);}
+.vng-drop-cat-line{flex:1;height:1px;opacity:.2;}
+.cat-pages .vng-drop-cat-line{background:var(--cyan);}
+.cat-users .vng-drop-cat-line{background:var(--purple);}
+.cat-profiles .vng-drop-cat-line{background:var(--gold);}
+/* ── Result items ── */
+.vng-drop-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;
+  cursor:none !important;    /* VNG custom cursor — native hidden */
+  pointer-events:auto !important;
+  user-select:none;
+  transition:background .15s,border-left-color .15s,color .15s;
+  border-left:2px solid transparent;
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;letter-spacing:1.5px;color:var(--t2);
+  position:relative;
+}
+.vng-drop-item *{
+  pointer-events:none;  /* children don't intercept — click always bubbles to item */
+}
+.vng-drop-item:hover,.vng-drop-item.vng-active{
+  background:rgba(0,245,255,.05);
+  border-left-color:var(--cyan);
+  color:var(--t1);
+}
+.vng-drop-item.vng-user-item:hover,.vng-drop-item.vng-user-item.vng-active{
+  background:rgba(191,0,255,.06);
+  border-left-color:var(--purple);
+}
+.vng-drop-item.vng-profile-item:hover,.vng-drop-item.vng-profile-item.vng-active{
+  background:rgba(255,215,0,.05);
+  border-left-color:var(--gold);
+}
+/* emoji / avatar */
+.vng-drop-emoji{font-size:14px;flex-shrink:0;transition:filter .15s;}
+.vng-drop-item:hover .vng-drop-emoji{filter:drop-shadow(0 0 5px rgba(0,245,255,.6));}
+.vng-drop-avatar{
+  width:28px;height:28px;flex-shrink:0;border-radius:50%;
+  border:1px solid rgba(191,0,255,.35);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:rgba(191,0,255,.1);
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;
+  color:var(--purple);
+  transition:border-color .15s;
+}
+.vng-drop-item:hover .vng-drop-avatar{border-color:rgba(191,0,255,.7);}
+.vng-drop-avatar img{width:100%;height:100%;object-fit:cover;}
+.vng-drop-gold-av{
+  border-color:rgba(255,215,0,.35);
+  background:rgba(255,215,0,.08);
+  color:var(--gold);
+}
+.vng-drop-item:hover .vng-drop-gold-av{border-color:rgba(255,215,0,.7);}
+/* text inner */
+.vng-drop-item-inner{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.vng-drop-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vng-drop-desc{
+  font-family:'Rajdhani',sans-serif;
+  font-size:10px;letter-spacing:.3px;color:var(--t3);
+  font-weight:400;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:260px;
+}
+/* loading spinner row */
+.vng-drop-loading{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);
+}
+.vng-drop-spinner{
+  width:10px;height:10px;border-radius:50%;
+  border:1.5px solid rgba(191,0,255,.3);
+  border-top-color:var(--purple);
+  animation:vngSpin .6s linear infinite;
+  flex-shrink:0;
+}
+@keyframes vngSpin{to{transform:rotate(360deg);}}
+/* empty / no match */
+.vng-drop-empty{
+  padding:14px 14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;color:var(--t3);
+}
+.vng-drop-no-results{
+  padding:18px 14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;color:var(--t3);
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.03);
+}
+/* highlight match */
+.vng-hl{color:var(--cyan);font-weight:700;}
+.vng-hl-p{color:var(--purple);font-weight:700;}
+.vng-hl-g{color:var(--gold);font-weight:700;}
+/* user profile modal overlay */
+#vng-profile-modal{
+  position:fixed;inset:0;z-index:10000;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(3,5,8,.85);
+  backdrop-filter:blur(8px);
+  padding:20px;
+  cursor:none !important;
+}
+#vng-profile-modal.vng-modal-open{display:flex;animation:vngFadeIn .2s ease both;}
+@keyframes vngFadeIn{from{opacity:0;}to{opacity:1;}}
+.vng-profile-card{
+  background:var(--card);
+  border:1px solid rgba(0,245,255,.2);
+  border-top:2px solid rgba(191,0,255,.6);
+  width:100%;max-width:420px;
+  position:relative;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+  animation:vngSlideUp .22s ease both;
+  box-shadow:0 0 60px rgba(0,245,255,.08),0 0 120px rgba(191,0,255,.06);
+}
+@keyframes vngSlideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.vng-pc-header{
+  padding:28px 28px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:18px;
+}
+.vng-pc-avatar{
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid rgba(191,0,255,.4);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:rgba(191,0,255,.12);
+  font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;
+  color:var(--purple);flex-shrink:0;
+  box-shadow:0 0 20px rgba(191,0,255,.2);
+}
+.vng-pc-avatar img{width:100%;height:100%;object-fit:cover;}
+.vng-pc-name{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;letter-spacing:2px;color:var(--t1);}
+.vng-pc-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--purple);margin-top:4px;}
+.vng-pc-body{padding:20px 28px;}
+.vng-pc-bio{
+  font-size:13px;color:var(--t2);line-height:1.65;letter-spacing:.3px;
+  padding:14px;
+  background:rgba(0,245,255,.02);
+  border:1px solid var(--border);
+  margin-bottom:14px;
+  min-height:44px;
+}
+.vng-pc-bio.empty{color:var(--t3);font-style:italic;}
+.vng-pc-meta{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);
+}
+.vng-pc-close{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;
+  background:transparent;border:1px solid rgba(255,255,255,.08);
+  color:var(--t3);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:none !important;transition:all .2s;
+}
+.vng-pc-close:hover{border-color:rgba(var(--r),.4);color:var(--red);}
+.vng-pc-footer{
+  padding:14px 28px;border-top:1px solid var(--border);
+  display:flex;gap:8px;justify-content:flex-end;
+}
+.vng-pc-btn{
+  font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;
+  padding:7px 16px;background:transparent;cursor:none !important;
+  border:1px solid rgba(0,245,255,.25);color:var(--cyan);transition:all .25s;
+  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.vng-pc-btn:hover{background:rgba(0,245,255,.08);border-color:rgba(0,245,255,.5);}
+/* search bar wider on large screens */
+@media(min-width:1200px){
+  .vng-search-wrap{flex:0 1 300px;}
+}
+
+/* Mobile: hide search in collapsed nav, show as icon only */
+@media(max-width:900px){
+  .vng-search-wrap{
+    display:none;
+  }
+  .vng-search-wrap.vng-mobile-open{
+    display:block;
+    position:fixed;
+    top:var(--nav-h);
+    left:0;right:0;
+    padding:10px 16px;
+    background:rgba(3,5,8,.97);
+    border-bottom:1px solid rgba(0,245,255,.12);
+    z-index:999;
+    flex:unset;
+    min-width:unset;
+  }
+  .vng-search-mobile-btn{
+    display:flex!important;
+  }
+}
+.vng-search-mobile-btn{
+  display:none;
+  background:transparent;
+  border:1px solid rgba(0,245,255,.18);
+  color:rgba(0,245,255,.7);
+  width:36px;height:36px;
+  align-items:center;justify-content:center;
+  font-size:14px;
+  cursor:none;
+  transition:all .25s;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+
 /* ═══════════════════════════════════════
    AUTH SYSTEM — FIREBASE
 ═══════════════════════════════════════ */
@@ -573,7 +897,7 @@ footer{
   width:38px;height:38px;
   border:1px solid rgba(0,245,255,.2);
   background:transparent;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  cursor:none !important;display:flex;align-items:center;justify-content:center;
   transition:all .25s;position:relative;
   clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
   overflow:hidden;
@@ -599,7 +923,7 @@ footer{
 
 /* Auth tabs inside card */
 .auth-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:1px solid rgba(0,245,255,.1);}
-.auth-tab{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:10px 18px;background:transparent;border:none;color:var(--t3);cursor:pointer;transition:color .2s;position:relative;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.auth-tab{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:10px 18px;background:transparent;border:none;color:var(--t3);cursor:none !important;transition:color .2s;position:relative;border-bottom:2px solid transparent;margin-bottom:-1px;}
 .auth-tab:hover{color:var(--t1);}
 .auth-tab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
 .auth-panel{display:none;}
@@ -612,16 +936,16 @@ footer{
 .auth-input{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);color:var(--t1);font-family:'Rajdhani',sans-serif;font-size:15px;padding:12px 15px;outline:none;transition:border-color .3s,box-shadow .3s;letter-spacing:.3px;}
 .auth-input:focus{border-color:rgba(0,245,255,.5);box-shadow:0 0 14px rgba(0,245,255,.07);}
 .auth-input::placeholder{color:var(--t3);opacity:.5;}
-.auth-btn{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:14px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:6px;}
+.auth-btn{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;padding:14px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:none !important;font-weight:900;transition:all .3s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);margin-top:6px;}
 .auth-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,255,.35);}
-.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.auth-btn:disabled{opacity:.5;cursor:none !important;transform:none;box-shadow:none;}
 .auth-msg{padding:10px 14px;margin-bottom:16px;font-size:11px;letter-spacing:1px;font-family:'Share Tech Mono',monospace;line-height:1.5;display:none;}
 .auth-msg.error{background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;display:block;}
 .auth-msg.success{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:#00ff88;display:block;}
 .auth-footer-link{text-align:center;margin-top:16px;font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:1.5px;color:var(--t3);}
-.auth-footer-link a{color:var(--cyan);cursor:pointer;transition:color .2s;text-decoration:none;}
+.auth-footer-link a{color:var(--cyan);cursor:none !important;transition:color .2s;text-decoration:none;}
 .auth-footer-link a:hover{color:var(--purple);}
-.eye-toggle{position:absolute;right:12px;top:38px;cursor:pointer;color:var(--t3);font-size:13px;user-select:none;transition:color .2s;}
+.eye-toggle{position:absolute;right:12px;top:38px;cursor:none !important;color:var(--t3);font-size:13px;user-select:none;transition:color .2s;}
 .eye-toggle:hover{color:var(--cyan);}
 .strength-wrap{margin-top:5px;}
 .strength-bar{height:2px;background:rgba(0,245,255,.1);overflow:hidden;}
@@ -636,7 +960,7 @@ footer{
 .dash-av-wrap{position:relative;width:90px;height:90px;flex-shrink:0;}
 .dash-av{width:90px;height:90px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:#000;overflow:hidden;}
 .dash-av img{width:100%;height:100%;object-fit:cover;}
-.dash-av-edit{position:absolute;bottom:-2px;right:-4px;width:26px;height:26px;background:var(--purple);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:transform .2s;color:#fff;}
+.dash-av-edit{position:absolute;bottom:-2px;right:-4px;width:26px;height:26px;background:var(--purple);border:none;cursor:none !important;font-size:11px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:transform .2s;color:#fff;}
 .dash-av-edit:hover{transform:scale(1.2);}
 #av-file{display:none;}
 .dash-av-loading{position:absolute;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;font-size:18px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);}
@@ -647,7 +971,7 @@ footer{
 .d-badge{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;padding:3px 10px;border:1px solid rgba(0,245,255,.3);color:var(--cyan);display:inline-block;}
 .d-badge.pu{border-color:rgba(191,0,255,.3);color:var(--purple);}
 .dash-btns{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
-.dash-btns button{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:10px 18px;cursor:pointer;transition:all .25s;white-space:nowrap;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.dash-btns button{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;padding:10px 18px;cursor:none !important;transition:all .25s;white-space:nowrap;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
 .btn-edit-p{background:transparent;border:1px solid rgba(0,245,255,.3);color:var(--cyan);}
 .btn-edit-p:hover{background:rgba(0,245,255,.07);}
 .btn-logout-p{background:rgba(255,0,60,.07);border:1px solid rgba(255,0,60,.3);color:#ff6b8a;}
@@ -668,9 +992,9 @@ footer{
 .ef-input,.ef-textarea{width:100%;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.14);color:var(--t1);font-family:'Rajdhani',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .3s;resize:vertical;}
 .ef-input:focus,.ef-textarea:focus{border-color:rgba(0,245,255,.45);box-shadow:0 0 10px rgba(0,245,255,.06);}
 .ef-actions{display:flex;gap:10px;align-items:center;margin-top:12px;}
-.btn-save{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:pointer;font-weight:900;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+.btn-save{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none;cursor:none !important;font-weight:900;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
 .btn-save:hover{box-shadow:0 0 18px rgba(0,245,255,.3);}
-.btn-cancel-edit{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:transparent;color:var(--t2);border:1px solid rgba(255,255,255,.1);cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+.btn-cancel-edit{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:2px;padding:11px 22px;background:transparent;color:var(--t2);border:1px solid rgba(255,255,255,.1);cursor:none !important;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
 .btn-cancel-edit:hover{border-color:rgba(255,255,255,.3);}
 .save-msg{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:#00ff88;opacity:0;transition:opacity .3s;}
 .save-msg.show{opacity:1;}
@@ -683,7 +1007,7 @@ footer{
 
 /* Quick links */
 .dash-quick-links{display:flex;flex-direction:column;gap:6px;}
-.dql-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(0,245,255,.08);background:rgba(0,245,255,.02);cursor:pointer;transition:all .2s;font-size:13px;color:var(--t2);letter-spacing:.5px;}
+.dql-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(0,245,255,.08);background:rgba(0,245,255,.02);cursor:none !important;transition:all .2s;font-size:13px;color:var(--t2);letter-spacing:.5px;}
 .dql-item:hover{border-color:rgba(0,245,255,.25);color:var(--cyan);background:rgba(0,245,255,.04);padding-left:18px;}
 .dql-icon{font-size:15px;width:20px;text-align:center;}
 
@@ -703,6 +1027,367 @@ footer{
   .dash-grid{grid-template-columns:1fr;}
   .dash-card.full{grid-column:span 1;}
   .dash-stats{grid-template-columns:1fr 1fr;}
+}
+
+/* ═══════════════════════════════════════════════════
+   VNG SOCIAL SYSTEM — Notifications · Followers · Following
+   All new selectors prefixed vng-soc- to prevent any
+   collision with existing styles.
+═══════════════════════════════════════════════════ */
+
+/* ── Notification Bell — now lives inside user profile only ── */
+/* (bell styles kept below for .vng-soc-badge animation shared with in-profile badge) */
+
+/* Shared panel animation */
+@keyframes vng-soc-dropIn{
+  from{opacity:0;transform:translateY(-8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+/* Shared panel header */
+.vng-soc-panel-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px 10px;
+  border-bottom:1px solid rgba(0,245,255,.08);
+  flex-shrink:0;
+}
+.vng-soc-panel-title{
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;
+  color:var(--cyan);
+}
+.vng-soc-mark-all{
+  font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;
+  color:var(--t3);background:transparent;border:none;cursor:none !important;
+  transition:color .2s;padding:3px 6px;
+}
+.vng-soc-mark-all:hover{color:var(--purple);}
+/* Scrollable list */
+.vng-soc-notif-list{
+  overflow-y:auto;
+  flex:1;
+}
+.vng-soc-notif-list::-webkit-scrollbar{width:2px;}
+.vng-soc-notif-list::-webkit-scrollbar-thumb{background:rgba(0,245,255,.25);}
+/* Individual notification row */
+.vng-soc-notif-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 14px;
+  border-bottom:1px solid rgba(255,255,255,.03);
+  cursor:none !important;
+  transition:background .15s;
+  position:relative;
+}
+.vng-soc-notif-row:hover{background:rgba(0,245,255,.04);}
+.vng-soc-notif-row.unread{background:rgba(191,0,255,.04);}
+.vng-soc-notif-row.unread::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--purple);
+}
+.vng-soc-notif-ico{
+  font-size:16px;flex-shrink:0;margin-top:1px;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+}
+.vng-soc-notif-body{flex:1;min-width:0;}
+.vng-soc-notif-txt{
+  font-family:'Rajdhani',sans-serif;font-size:12px;
+  color:var(--t1);line-height:1.45;letter-spacing:.3px;
+}
+.vng-soc-notif-txt strong{color:var(--cyan);font-weight:600;}
+.vng-soc-notif-time{
+  font-family:'Share Tech Mono',monospace;font-size:8px;
+  letter-spacing:1px;color:var(--t3);margin-top:3px;
+}
+.vng-soc-notif-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--purple);flex-shrink:0;margin-top:6px;
+  display:none;
+}
+.vng-soc-notif-row.unread .vng-soc-notif-dot{display:block;}
+/* Empty state */
+.vng-soc-notif-empty{
+  padding:28px 14px;
+  text-align:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;color:var(--t3);
+}
+/* Panel footer */
+.vng-soc-panel-footer{
+  padding:9px 14px;
+  border-top:1px solid rgba(0,245,255,.06);
+  text-align:center;
+  flex-shrink:0;
+}
+.vng-soc-panel-footer-btn{
+  font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;
+  color:var(--t3);background:transparent;border:none;
+  cursor:none !important;transition:color .2s;
+}
+.vng-soc-panel-footer-btn:hover{color:var(--cyan);}
+/* Badge pulse animation (shared with in-profile badge) */
+@keyframes vng-soc-badge-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,0,60,.6);}
+  50%{box-shadow:0 0 0 5px rgba(255,0,60,0);}
+}
+
+/* ══════════════════════════════════════════════════
+   IN-PROFILE NOTIFICATION PANEL
+   Scoped to profile dashboard — never in navbar
+══════════════════════════════════════════════════ */
+
+/* Badge on the notification pill */
+.vng-prof-notif-badge{
+  position:absolute;
+  top:-4px;right:-4px;
+  min-width:16px;height:16px;
+  background:var(--red);
+  border:1.5px solid var(--bg);
+  border-radius:50%;
+  font-family:'Orbitron',sans-serif;
+  font-size:8px;font-weight:900;
+  color:#fff;
+  display:none;
+  align-items:center;justify-content:center;
+  padding:0 3px;
+  animation:vng-soc-badge-pulse 2s ease-in-out infinite;
+  z-index:2;
+  pointer-events:none;
+}
+.vng-prof-notif-badge.show{display:flex;}
+
+/* Notification panel anchored below the stat row */
+.vng-prof-notif-panel{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:380px;
+  max-width:calc(100vw - 40px);
+  background:rgba(3,5,8,.98);
+  border:1px solid rgba(255,215,0,.22);
+  border-top:2px solid rgba(255,215,0,.55);
+  box-shadow:0 16px 60px rgba(0,0,0,.9),0 0 40px rgba(255,215,0,.06),0 0 80px rgba(191,0,255,.04);
+  z-index:9995;
+  display:none;
+  overflow:hidden;
+  max-height:480px;
+  flex-direction:column;
+}
+.vng-prof-notif-panel.open{
+  display:flex;
+  animation:vng-soc-dropIn .18s ease both;
+}
+
+/* Filter tab row */
+.vng-prof-notif-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid rgba(255,215,0,.1);
+  overflow-x:auto;
+  flex-shrink:0;
+}
+.vng-prof-notif-tabs::-webkit-scrollbar{height:2px;}
+.vng-prof-notif-tabs::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3);}
+.vng-prof-notif-tab{
+  font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:1.5px;
+  padding:8px 10px;
+  background:transparent;
+  border:none;border-right:1px solid rgba(255,215,0,.08);
+  color:rgba(255,215,0,.4);
+  cursor:none !important;
+  white-space:nowrap;
+  transition:color .2s,background .2s;
+  flex-shrink:0;
+}
+.vng-prof-notif-tab:hover{color:rgba(255,215,0,.7);background:rgba(255,215,0,.04);}
+.vng-prof-notif-tab.active{
+  color:var(--gold);
+  background:rgba(255,215,0,.08);
+  border-bottom:2px solid var(--gold);
+}
+
+/* Stat row needs relative so panel anchors to it */
+.vng-soc-stat-row{
+  display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;
+  position:relative;
+}
+.vng-soc-stat-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 14px;
+  border:1px solid rgba(0,245,255,.15);
+  background:rgba(0,245,255,.04);
+  cursor:none !important;
+  transition:all .25s;
+  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.vng-soc-stat-pill:hover{
+  border-color:rgba(0,245,255,.4);
+  background:rgba(0,245,255,.09);
+  box-shadow:0 0 14px rgba(0,245,255,.15);
+}
+.vng-soc-stat-pill.pu{
+  border-color:rgba(191,0,255,.18);
+  background:rgba(191,0,255,.04);
+}
+.vng-soc-stat-pill.pu:hover{
+  border-color:rgba(191,0,255,.45);
+  background:rgba(191,0,255,.09);
+  box-shadow:0 0 14px rgba(191,0,255,.18);
+}
+.vng-soc-stat-n{
+  font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;
+  color:var(--cyan);
+}
+.vng-soc-stat-pill.pu .vng-soc-stat-n{color:var(--purple);}
+.vng-soc-stat-l{
+  font-family:'Share Tech Mono',monospace;font-size:8px;
+  letter-spacing:2px;color:var(--t3);
+}
+
+/* ── Followers / Following Modal ── */
+.vng-soc-modal{
+  position:fixed;inset:0;z-index:10001;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(3,5,8,.88);
+  backdrop-filter:blur(10px);
+  padding:20px;
+  cursor:none !important;
+}
+.vng-soc-modal.open{
+  display:flex;
+  animation:vng-soc-fadeIn .2s ease both;
+}
+@keyframes vng-soc-fadeIn{from{opacity:0;}to{opacity:1;}}
+.vng-soc-modal-card{
+  background:var(--card);
+  border:1px solid rgba(0,245,255,.2);
+  border-top:2px solid rgba(191,0,255,.6);
+  width:100%;max-width:500px;
+  max-height:80vh;
+  display:flex;flex-direction:column;
+  position:relative;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+  animation:vng-soc-slideUp .22s ease both;
+  box-shadow:0 0 60px rgba(0,245,255,.08),0 0 120px rgba(191,0,255,.06);
+}
+@keyframes vng-soc-slideUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.vng-soc-modal-hdr{
+  padding:20px 22px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.vng-soc-modal-title{
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:2px;color:var(--cyan);
+}
+.vng-soc-modal-close{
+  width:28px;height:28px;
+  background:transparent;border:1px solid rgba(255,255,255,.08);
+  color:var(--t3);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:none !important;transition:all .2s;
+}
+.vng-soc-modal-close:hover{border-color:rgba(255,0,60,.4);color:var(--red);}
+/* Search inside modal */
+.vng-soc-modal-search{
+  padding:12px 22px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.vng-soc-modal-search-inp{
+  width:100%;
+  background:rgba(0,245,255,.04);
+  border:1px solid rgba(0,245,255,.15);
+  color:var(--t1);
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;
+  padding:8px 12px;
+  outline:none;
+  transition:border-color .25s,box-shadow .25s;
+  cursor:none !important;
+}
+.vng-soc-modal-search-inp::placeholder{color:rgba(0,245,255,.3);}
+.vng-soc-modal-search-inp:focus{
+  border-color:rgba(0,245,255,.5);
+  box-shadow:0 0 12px rgba(0,245,255,.1);
+}
+/* User list */
+.vng-soc-user-list{
+  overflow-y:auto;
+  flex:1;
+  padding:8px 0;
+}
+.vng-soc-user-list::-webkit-scrollbar{width:2px;}
+.vng-soc-user-list::-webkit-scrollbar-thumb{background:rgba(0,245,255,.25);}
+/* User card inside modal */
+.vng-soc-user-card{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 22px;
+  border-bottom:1px solid rgba(255,255,255,.03);
+  transition:background .15s;
+}
+.vng-soc-user-card:hover{background:rgba(0,245,255,.04);}
+.vng-soc-user-av{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid rgba(191,0,255,.35);
+  background:rgba(191,0,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;
+  color:var(--purple);overflow:hidden;
+  transition:border-color .2s;
+}
+.vng-soc-user-card:hover .vng-soc-user-av{border-color:rgba(191,0,255,.7);}
+.vng-soc-user-av img{width:100%;height:100%;object-fit:cover;}
+.vng-soc-user-info{flex:1;min-width:0;}
+.vng-soc-user-name{
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1px;color:var(--t1);margin-bottom:3px;
+}
+.vng-soc-user-bio{
+  font-size:11px;color:var(--t3);line-height:1.4;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:200px;
+}
+.vng-soc-user-actions{display:flex;gap:6px;flex-shrink:0;}
+.vng-soc-follow-btn{
+  font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:1.5px;
+  padding:5px 10px;border:1px solid rgba(0,245,255,.3);
+  color:var(--cyan);background:transparent;
+  cursor:none !important;transition:all .2s;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+.vng-soc-follow-btn:hover{background:rgba(0,245,255,.1);border-color:rgba(0,245,255,.6);}
+.vng-soc-follow-btn.following{
+  background:rgba(0,245,255,.1);border-color:rgba(0,245,255,.5);
+  color:var(--cyan);
+}
+.vng-soc-view-btn{
+  font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:1.5px;
+  padding:5px 10px;border:1px solid rgba(191,0,255,.3);
+  color:var(--purple);background:transparent;
+  cursor:none !important;transition:all .2s;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+.vng-soc-view-btn:hover{background:rgba(191,0,255,.1);border-color:rgba(191,0,255,.6);}
+/* Modal empty state */
+.vng-soc-list-empty{
+  padding:30px 22px;
+  text-align:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;color:var(--t3);
+}
+
+/* ── Mobile responsive ── */
+@media(max-width:900px){
+  .vng-prof-notif-panel{width:300px;left:-10px;}
+}
+@media(max-width:760px){
+  .vng-soc-stat-row{justify-content:center;}
+  .vng-prof-notif-panel{width:calc(100vw - 30px);left:-60px;}
+  .vng-soc-modal-card{max-height:90vh;}
+  .vng-soc-user-bio{max-width:120px;}
 }
 </style>
 
@@ -736,6 +1421,27 @@ footer{
 <!-- ═══ NAV ═══ -->
 <nav id="navbar">
   <a href="#" class="logo" onclick="showPg('home');return false;">VNG<span>·</span><sub>NOVA</sub></a>
+
+  <!-- VNG FUTURISTIC SEARCH BAR -->
+  <div class="vng-search-wrap" id="vng-search-wrap">
+    <div class="vng-search-inner">
+      <span class="vng-search-icon">⌕</span>
+      <input
+        type="text"
+        id="vng-search-input"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="SEARCH VNG..."
+        oninput="vngSearchInput(this.value)"
+        onfocus="vngSearchFocus()"
+        onblur="vngSearchBlur()"
+        onkeydown="vngSearchKey(event)"
+      />
+    </div>
+    <div id="vng-search-dropdown"></div>
+  </div>
+  <button class="vng-search-mobile-btn" id="vng-search-mobile-btn" onclick="vngToggleMobileSearch()" title="Search">🔍</button>
+
   <ul class="nav-links" id="navlinks">
     <li><a data-page="home" onclick="showPg('home')">🏠 HOME</a></li>
     <li><a data-page="updates" onclick="showPg('updates')">📢 UPDATES</a></li>
@@ -1702,6 +2408,43 @@ footer{
           <span class="d-badge">⚡ VNG MEMBER</span>
           <span class="d-badge pu">🎮 NOVA GENERATION</span>
         </div>
+        <!-- VNG Social Stats -->
+        <div class="vng-soc-stat-row">
+          <div class="vng-soc-stat-pill" onclick="vngSocOpenModal('followers')" title="View Followers">
+            <span class="vng-soc-stat-n" id="vng-soc-followers-count">0</span>
+            <span class="vng-soc-stat-l">FOLLOWERS</span>
+          </div>
+          <div class="vng-soc-stat-pill pu" onclick="vngSocOpenModal('following')" title="View Following">
+            <span class="vng-soc-stat-n" id="vng-soc-following-count">0</span>
+            <span class="vng-soc-stat-l">FOLLOWING</span>
+          </div>
+          <!-- ══ IN-PROFILE NOTIFICATION BELL ══ -->
+          <div class="vng-soc-stat-pill vng-soc-stat-pill--notif" id="vng-prof-notif-pill" onclick="vngProfToggleNotif(event)" title="Notifications" style="border-color:rgba(255,215,0,.18);background:rgba(255,215,0,.04);position:relative;cursor:none !important;">
+            <span style="font-size:15px;line-height:1;">🔔</span>
+            <span class="vng-soc-stat-l" style="color:rgba(255,215,0,.75);letter-spacing:2px;">NOTIFICATIONS</span>
+            <span class="vng-prof-notif-badge" id="vng-prof-notif-badge"></span>
+          </div>
+        </div>
+
+        <!-- ══ IN-PROFILE NOTIFICATION PANEL ══ -->
+        <div class="vng-prof-notif-panel" id="vng-prof-notif-panel" role="dialog" aria-label="Notifications">
+          <div class="vng-soc-panel-hdr" style="border-bottom-color:rgba(255,215,0,.12);">
+            <span class="vng-soc-panel-title" style="color:var(--gold);font-size:9px;">🔔 MY NOTIFICATIONS</span>
+            <button class="vng-soc-mark-all" onclick="vngProfMarkAllRead()" style="color:rgba(255,215,0,.4);">MARK ALL READ</button>
+          </div>
+          <!-- Filter tabs -->
+          <div class="vng-prof-notif-tabs" id="vng-prof-notif-tabs">
+            <button class="vng-prof-notif-tab active" data-filter="all"      onclick="vngProfSetFilter(this,'all')">ALL</button>
+            <button class="vng-prof-notif-tab"        data-filter="follow"   onclick="vngProfSetFilter(this,'follow')">👤 FOLLOWERS</button>
+            <button class="vng-prof-notif-tab"        data-filter="message"  onclick="vngProfSetFilter(this,'message')">✉ MESSAGES</button>
+            <button class="vng-prof-notif-tab"        data-filter="visit"    onclick="vngProfSetFilter(this,'visit')">👁 VISITS</button>
+            <button class="vng-prof-notif-tab"        data-filter="update"   onclick="vngProfSetFilter(this,'update')">📢 UPDATES</button>
+          </div>
+          <div class="vng-soc-notif-list" id="vng-prof-notif-list" style="max-height:280px;"></div>
+          <div class="vng-soc-panel-footer" style="border-top-color:rgba(255,215,0,.08);">
+            <button class="vng-soc-panel-footer-btn" onclick="vngProfToggleNotif(event)" style="color:rgba(255,215,0,.4);">CLOSE ✕</button>
+          </div>
+        </div>
       </div>
       <div class="dash-btns">
         <button class="btn-edit-p" onclick="toggleEditForm()">✏ EDIT PROFILE</button>
@@ -2478,6 +3221,417 @@ function toggleEye(id, btn){
   btn.textContent=inp.type==='password'?'👁':'🙈';
 }
 
+/* ══════════════════════════════════════════════════════════
+   VNG SEARCH SYSTEM v2 — PAGES · USERS · PROFILES
+   Extends existing search; all prior functionality kept.
+══════════════════════════════════════════════════════════ */
+(function(){
+
+  /* ── Static page definitions (unchanged from v1) ── */
+  const VNG_SECTIONS = [
+    { page:'home',      emoji:'🏠', label:'HOME',      desc:'Landing page — VNG overview & stats',               keywords:['home','landing','welcome','vng','main','start','hero','nova','venky'] },
+    { page:'updates',   emoji:'📢', label:'UPDATES',   desc:'Latest news, changelogs & project progress',         keywords:['update','news','changelog','latest','announcement','release','youtube','subscribers','beta','fix','bug','patch','devlog'] },
+    { page:'projects',  emoji:'🎮', label:'PROJECTS',  desc:'Games, websites, apps & experimental builds',        keywords:['project','game','shadow realm','nova strike','hyper drift','vng app','ai companion','unity','unreal','flutter','web','app','build','demo'] },
+    { page:'vision',    emoji:'🚀', label:'VISION',    desc:'Roadmap, goals & the VNG dream',                     keywords:['vision','roadmap','goal','dream','future','plan','phase','mission','strategy','why','next'] },
+    { page:'community', emoji:'🌐', label:'COMMUNITY', desc:'Discord, WhatsApp, events & fan creations',          keywords:['community','discord','whatsapp','member','event','challenge','fan','join','social','online','tournament','leaderboard'] },
+    { page:'about',     emoji:'👨‍💻', label:'ABOUT',     desc:'Founder story, skills, journey & contact',           keywords:['about','venky','founder','story','skill','journey','contact','bio','who','background','experience'] }
+  ];
+
+  /* ── State ── */
+  let _blurTimer    = null;
+  let _activeIdx    = -1;
+  let _allItems     = [];   // flat list of all rendered clickable rows for keyboard nav
+  let _userCache    = null; // cached Firestore results
+  let _lastQuery    = '';
+  let _searchTimer  = null;
+  let _fbSearching  = false;
+
+  /* ── Helpers ── */
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function hl(text, q, cls){
+    cls = cls || 'vng-hl';
+    if(!q) return esc(text);
+    const re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    return esc(text).replace(re,'<span class="'+cls+'">$1</span>');
+  }
+
+  function scoreSection(s, q){
+    let sc=0;
+    const lq=q.toLowerCase();
+    if(s.label.toLowerCase().startsWith(lq)) sc+=10;
+    if(s.label.toLowerCase().includes(lq))   sc+=6;
+    for(const kw of s.keywords){
+      if(kw.startsWith(lq)) sc+=4;
+      else if(kw.includes(lq)) sc+=2;
+    }
+    if(s.desc.toLowerCase().includes(lq)) sc+=1;
+    return sc;
+  }
+
+  function scoreUser(u, q){
+    const lq=q.toLowerCase();
+    const un=(u.username||'').toLowerCase();
+    if(un===lq)             return 12;
+    if(un.startsWith(lq))   return 8;
+    if(un.includes(lq))     return 4;
+    return 0;
+  }
+
+  /* ── Avatar HTML helper ── */
+  function avatarHtml(user, extraClass){
+    const cls = 'vng-drop-avatar'+(extraClass?' '+extraClass:'');
+    if(user.photoURL){
+      return '<div class="'+cls+'"><img src="'+esc(user.photoURL)+'" alt="av" loading="lazy"></div>';
+    }
+    const letter = (user.username||'?')[0].toUpperCase();
+    return '<div class="'+cls+'">'+esc(letter)+'</div>';
+  }
+
+  /* ── Build dropdown HTML ── */
+  function buildDropdown(q, users){
+    const lq = q.toLowerCase().trim();
+    let html = '';
+
+    /* ── PAGES category ── */
+    const pageResults = lq
+      ? VNG_SECTIONS.map(s=>({s,sc:scoreSection(s,lq)})).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).map(x=>x.s)
+      : VNG_SECTIONS.slice();
+
+    html += '<div class="vng-drop-cat cat-pages">⬡ PAGES <div class="vng-drop-cat-line"></div></div>';
+    if(pageResults.length){
+      pageResults.forEach(s=>{
+        html += '<div class="vng-drop-item" data-action="page" data-page="'+s.page+'" onmousedown="event.preventDefault()" onclick="vngSearchGo(\''+s.page+'\')">' +
+          '<span class="vng-drop-emoji">'+s.emoji+'</span>' +
+          '<div class="vng-drop-item-inner">' +
+            '<span class="vng-drop-label">'+hl(s.label,lq,'vng-hl')+'</span>' +
+            '<span class="vng-drop-desc">'+esc(s.desc)+'</span>' +
+          '</div></div>';
+      });
+    } else {
+      html += '<div class="vng-drop-empty">No pages match.</div>';
+    }
+
+    /* ── USERS category ── */
+    html += '<div class="vng-drop-cat cat-users">◈ USERS <div class="vng-drop-cat-line"></div></div>';
+    if(_fbSearching){
+      html += '<div class="vng-drop-loading"><div class="vng-drop-spinner"></div>Searching users...</div>';
+    } else if(!users || users.length===0){
+      html += '<div class="vng-drop-empty">'+(lq ? 'No users match "'+esc(lq)+'".' : 'Type to search registered users.')+'</div>';
+    } else {
+      users.forEach(u=>{
+        const uname = u.username || 'Unknown';
+        html += '<div class="vng-drop-item vng-user-item" data-action="user" data-uid="'+esc(u.uid)+'"' +
+          ' onmousedown="event.preventDefault();vngOpenUserProfile(\''+esc(u.uid)+'\')"' +
+          ' ontouchend="event.preventDefault();vngOpenUserProfile(\''+esc(u.uid)+'\')">' +
+          avatarHtml(u) +
+          '<div class="vng-drop-item-inner">' +
+            '<span class="vng-drop-label">'+hl(uname,lq,'vng-hl-p')+'</span>' +
+            '<span class="vng-drop-desc vng-drop-desc-uid">// VNG MEMBER</span>' +
+          '</div></div>';
+      });
+    }
+
+    /* ── PROFILES category ── */
+    html += '<div class="vng-drop-cat cat-profiles">◉ PROFILES <div class="vng-drop-cat-line"></div></div>';
+    if(_fbSearching){
+      html += '<div class="vng-drop-loading"><div class="vng-drop-spinner"></div>Loading profiles...</div>';
+    } else if(!users || users.length===0){
+      html += '<div class="vng-drop-empty">'+(lq ? 'No profiles match.' : 'Type to search member profiles.')+'</div>';
+    } else {
+      users.forEach(u=>{
+        const uname = u.username || 'Unknown';
+        const bio   = u.bio ? (u.bio.length>60 ? u.bio.slice(0,60)+'…' : u.bio) : 'No bio yet.';
+        html += '<div class="vng-drop-item vng-profile-item" data-action="profile" data-uid="'+esc(u.uid)+'"' +
+          ' onmousedown="event.preventDefault();vngOpenUserProfile(\''+esc(u.uid)+'\')"' +
+          ' ontouchend="event.preventDefault();vngOpenUserProfile(\''+esc(u.uid)+'\')">' +
+          avatarHtml(u,'vng-drop-gold-av') +
+          '<div class="vng-drop-item-inner">' +
+            '<span class="vng-drop-label">'+hl(uname,lq,'vng-hl-g')+'</span>' +
+            '<span class="vng-drop-desc">'+esc(bio)+'</span>' +
+          '</div></div>';
+      });
+    }
+
+    if(!lq && (!users || users.length===0) && pageResults.length===0){
+      html += '<div class="vng-drop-no-results">// TYPE TO SEARCH VNG</div>';
+    }
+
+    return html;
+  }
+
+  /* ── Firestore search ── */
+  async function searchFirestore(q){
+    // Requires fbDb (set by Firebase init block)
+    if(typeof fbDb === 'undefined' || !fbDb || !q) return [];
+    try {
+      // Firestore prefix query: username >= q AND username < q + '\uf8ff'
+      const lq = q.toLowerCase();
+      const snap = await fbDb.collection('users')
+        .orderBy('username')
+        .startAt(lq)
+        .endAt(lq + '\uf8ff')
+        .limit(6)
+        .get();
+
+      if(!snap || snap.empty) return [];
+      return snap.docs.map(doc=>({ uid: doc.id, ...doc.data() }));
+    } catch(e){
+      // Fallback: case-sensitive get all and filter client-side (≤50 docs, safe)
+      try {
+        const snap2 = await fbDb.collection('users').limit(50).get();
+        if(!snap2 || snap2.empty) return [];
+        const lq2 = q.toLowerCase();
+        return snap2.docs
+          .map(doc=>({ uid: doc.id, ...doc.data() }))
+          .filter(u=>(u.username||'').toLowerCase().includes(lq2))
+          .slice(0,6);
+      } catch(e2){ return []; }
+    }
+  }
+
+  /* ── Main render ── */
+  function renderDropdown(q, users){
+    const drop = document.getElementById('vng-search-dropdown');
+    if(!drop) return;
+    drop.innerHTML = buildDropdown(q, users||[]);
+    drop.classList.add('vng-drop-open');
+    // Rebuild flat item list for keyboard nav
+    _allItems = Array.from(drop.querySelectorAll('.vng-drop-item'));
+    _activeIdx = -1;
+  }
+
+  function setActive(idx){
+    _allItems.forEach((el,i)=>{
+      el.classList.toggle('vng-active', i===idx);
+    });
+    if(idx>=0 && _allItems[idx]) _allItems[idx].scrollIntoView({block:'nearest'});
+    _activeIdx=idx;
+  }
+
+  /* ── Debounced search trigger ── */
+  function triggerSearch(q){
+    clearTimeout(_searchTimer);
+    const lq=(q||'').trim().toLowerCase();
+    _lastQuery=lq;
+
+    if(!lq){
+      _userCache=[];
+      _fbSearching=false;
+      renderDropdown('', []);
+      return;
+    }
+
+    // Immediately render pages + loading state for users/profiles
+    _fbSearching=true;
+    renderDropdown(lq, null);
+
+    _searchTimer = setTimeout(async function(){
+      if(lq !== _lastQuery) return; // stale query
+      const results = await searchFirestore(lq);
+      if(lq !== _lastQuery) return; // stale
+      _userCache = results;
+      _fbSearching = false;
+      renderDropdown(lq, results);
+    }, 220);
+  }
+
+  /* ── Profile modal ── */
+  window.vngOpenUserProfile = async function(uid){
+    if(!uid) return;
+    /* Cancel blur timer immediately — prevents dropdown closing before modal opens */
+    clearTimeout(_blurTimer);
+    // Close search
+    const drop = document.getElementById('vng-search-dropdown');
+    const inp  = document.getElementById('vng-search-input');
+    if(drop) drop.classList.remove('vng-drop-open');
+    if(inp)  inp.value='';
+    clearTimeout(_blurTimer);
+    _allItems=[]; _activeIdx=-1; _lastQuery='';
+
+    // Fetch user data
+    let userData = (_userCache||[]).find(u=>u.uid===uid);
+    if(!userData && typeof fbDb !== 'undefined' && fbDb){
+      try {
+        const snap = await fbDb.collection('users').doc(uid).get();
+        if(snap.exists) userData = { uid, ...snap.data() };
+      } catch(e){}
+    }
+    if(!userData) userData = { uid, username:'Unknown', bio:'', photoURL:'', joinDate:'' };
+
+    const uname  = userData.username || 'Unknown';
+    const bio    = userData.bio || '';
+    const photo  = userData.photoURL || '';
+    const joined = userData.joinDate || '';
+
+    // Populate modal
+    const avEl   = document.getElementById('vng-pc-avatar');
+    const nmEl   = document.getElementById('vng-pc-name');
+    const tagEl  = document.getElementById('vng-pc-tag');
+    const bioEl  = document.getElementById('vng-pc-bio');
+    const metaEl = document.getElementById('vng-pc-meta');
+
+    if(nmEl)  nmEl.textContent  = uname.toUpperCase();
+    if(tagEl) tagEl.textContent = '// VNG MEMBER';
+    if(avEl){
+      if(photo){
+        avEl.innerHTML = '<img src="'+esc(photo)+'" alt="avatar">';
+        avEl.style.fontSize='';
+      } else {
+        avEl.textContent = uname[0].toUpperCase();
+        avEl.style.fontSize='24px';
+      }
+    }
+    if(bioEl){
+      bioEl.textContent = bio || 'No bio yet.';
+      bioEl.classList.toggle('empty', !bio);
+    }
+    if(metaEl) metaEl.textContent = joined ? 'MEMBER SINCE ' + joined.toUpperCase() : '';
+
+    // ── Follow button logic ──
+    // Store viewed UID on the modal so vngPcToggleFollow can read it
+    const modal = document.getElementById('vng-profile-modal');
+    if(modal){
+      modal.dataset.viewedUid = uid;
+      modal.classList.add('vng-modal-open');
+    }
+
+    const followBtn = document.getElementById('vng-pc-follow-btn');
+    if(followBtn){
+      // Determine logged-in user — from fbAuth or from the social system's _currentUserUid
+      const loggedInUid = (typeof fbAuth !== 'undefined' && fbAuth && fbAuth.currentUser)
+        ? fbAuth.currentUser.uid
+        : (typeof window._vngSocCurrentUid !== 'undefined' ? window._vngSocCurrentUid : null);
+
+      const isSelf = loggedInUid && (uid === loggedInUid);
+      const isLoggedIn = !!loggedInUid;
+
+      if(!isLoggedIn || isSelf){
+        // Viewing own profile or not logged in — hide Follow button
+        followBtn.style.display = 'none';
+      } else {
+        // Viewing another user's profile — show Follow button with correct state
+        followBtn.style.display = '';
+        // Check if already following using the social system's _followingUidSet
+        const alreadyFollowing = (typeof window._vngSocIsFollowing === 'function')
+          ? window._vngSocIsFollowing(uid)
+          : false;
+        if(alreadyFollowing){
+          followBtn.textContent = 'UNFOLLOW';
+          followBtn.style.borderColor = 'rgba(0,245,255,.25)';
+          followBtn.style.color = 'var(--cyan)';
+        } else {
+          followBtn.textContent = 'FOLLOW';
+          followBtn.style.borderColor = 'rgba(191,0,255,.35)';
+          followBtn.style.color = 'var(--purple)';
+        }
+      }
+    }
+
+    // Close mobile search wrap if open
+    const wrap = document.getElementById('vng-search-wrap');
+    if(wrap && wrap.classList.contains('vng-mobile-open')){
+      wrap.classList.remove('vng-mobile-open');
+    }
+  };
+
+  window.vngCloseProfileModal = function(){
+    const modal = document.getElementById('vng-profile-modal');
+    if(modal) modal.classList.remove('vng-modal-open');
+  };
+
+  // Close modal on Escape
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){
+      const modal = document.getElementById('vng-profile-modal');
+      if(modal && modal.classList.contains('vng-modal-open')){
+        vngCloseProfileModal();
+        return;
+      }
+    }
+  });
+
+  /* ── Exposed globals (called from inline HTML) ── */
+  window.vngSearchInput = function(val){
+    triggerSearch(val);
+  };
+
+  window.vngSearchFocus = function(){
+    const inp = document.getElementById('vng-search-input');
+    const q = (inp ? inp.value : '') || '';
+    triggerSearch(q);
+  };
+
+  window.vngSearchBlur = function(){
+    /* 350ms — long enough for onmousedown/ontouchend on items to fire first */
+    _blurTimer = setTimeout(function(){
+      const drop = document.getElementById('vng-search-dropdown');
+      if(drop) drop.classList.remove('vng-drop-open');
+      _activeIdx=-1;
+    }, 350);
+  };
+
+  window.vngSearchKey = function(e){
+    const drop = document.getElementById('vng-search-dropdown');
+    const isOpen = drop && drop.classList.contains('vng-drop-open');
+    if(!isOpen) return;
+
+    if(e.key==='ArrowDown'){
+      e.preventDefault();
+      setActive(Math.min(_activeIdx+1, _allItems.length-1));
+    } else if(e.key==='ArrowUp'){
+      e.preventDefault();
+      setActive(Math.max(_activeIdx-1, -1));
+    } else if(e.key==='Enter'){
+      e.preventDefault();
+      if(_activeIdx>=0 && _allItems[_activeIdx]){
+        _allItems[_activeIdx].click();
+      }
+    } else if(e.key==='Escape'){
+      drop.classList.remove('vng-drop-open');
+      _activeIdx=-1;
+      const inp=document.getElementById('vng-search-input');
+      if(inp) inp.blur();
+    }
+  };
+
+  window.vngSearchGo = function(page){
+    const inp  = document.getElementById('vng-search-input');
+    const drop = document.getElementById('vng-search-dropdown');
+    if(inp)  inp.value='';
+    if(drop) drop.classList.remove('vng-drop-open');
+    clearTimeout(_blurTimer);
+    _allItems=[]; _activeIdx=-1; _lastQuery='';
+    const wrap = document.getElementById('vng-search-wrap');
+    if(wrap && wrap.classList.contains('vng-mobile-open')) wrap.classList.remove('vng-mobile-open');
+    if(typeof showPg==='function') showPg(page);
+  };
+
+  window.vngToggleMobileSearch = function(){
+    const wrap = document.getElementById('vng-search-wrap');
+    if(!wrap) return;
+    wrap.classList.toggle('vng-mobile-open');
+    if(wrap.classList.contains('vng-mobile-open')){
+      setTimeout(function(){
+        const inp=document.getElementById('vng-search-input');
+        if(inp){ inp.focus(); inp.select(); }
+      },80);
+    }
+  };
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e){
+    const wrap = document.getElementById('vng-search-wrap');
+    const drop = document.getElementById('vng-search-dropdown');
+    if(wrap && !wrap.contains(e.target)){
+      if(drop) drop.classList.remove('vng-drop-open');
+      _activeIdx=-1;
+    }
+  });
+
+})();
+/* ══ END VNG SEARCH SYSTEM v2 ══ */
+
 /* ── HELPERS ── */
 function showAuthMsg(id, txt, type){
   const el=document.getElementById(id);
@@ -2504,5 +3658,850 @@ function friendlyErr(code){
   }[code] || 'Something went wrong. Please try again.';
 }
 </script>
+
+<!-- ═══ VNG USER PROFILE MODAL ═══ -->
+<div id="vng-profile-modal" role="dialog" aria-modal="true" aria-label="User Profile" onclick="if(event.target===this)vngCloseProfileModal()">
+  <div class="vng-profile-card">
+    <button class="vng-pc-close" onclick="vngCloseProfileModal()" title="Close">✕</button>
+    <div class="vng-pc-header">
+      <div class="vng-pc-avatar" id="vng-pc-avatar">V</div>
+      <div>
+        <div class="vng-pc-name" id="vng-pc-name">USERNAME</div>
+        <div class="vng-pc-tag" id="vng-pc-tag">// VNG MEMBER</div>
+      </div>
+    </div>
+    <div class="vng-pc-body">
+      <div class="vng-pc-bio empty" id="vng-pc-bio">No bio yet.</div>
+      <div class="vng-pc-meta" id="vng-pc-meta"></div>
+    </div>
+    <div class="vng-pc-footer">
+      <!-- Follow button: only shown when viewing another user's profile -->
+      <button class="vng-pc-btn vng-pc-follow-btn" id="vng-pc-follow-btn"
+        style="display:none;border-color:rgba(191,0,255,.35);color:var(--purple);"
+        onclick="vngPcToggleFollow()">FOLLOW</button>
+      <button class="vng-pc-btn" onclick="vngCloseProfileModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VNG FOLLOWERS MODAL ═══ -->
+<div class="vng-soc-modal" id="vng-soc-followers-modal" role="dialog" aria-modal="true" aria-label="Followers" onclick="if(event.target===this)vngSocCloseModal('followers')">
+  <div class="vng-soc-modal-card">
+    <div class="vng-soc-modal-hdr">
+      <span class="vng-soc-modal-title">👥 FOLLOWERS</span>
+      <button class="vng-soc-modal-close" onclick="vngSocCloseModal('followers')" title="Close">✕</button>
+    </div>
+    <div class="vng-soc-modal-search">
+      <input type="text" class="vng-soc-modal-search-inp" id="vng-soc-followers-search" placeholder="SEARCH FOLLOWERS..." oninput="vngSocFilterList('followers',this.value)" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="vng-soc-user-list" id="vng-soc-followers-list"></div>
+  </div>
+</div>
+
+<!-- ═══ VNG FOLLOWING MODAL ═══ -->
+<div class="vng-soc-modal" id="vng-soc-following-modal" role="dialog" aria-modal="true" aria-label="Following" onclick="if(event.target===this)vngSocCloseModal('following')">
+  <div class="vng-soc-modal-card">
+    <div class="vng-soc-modal-hdr">
+      <span class="vng-soc-modal-title">⚡ FOLLOWING</span>
+      <button class="vng-soc-modal-close" onclick="vngSocCloseModal('following')" title="Close">✕</button>
+    </div>
+    <div class="vng-soc-modal-search">
+      <input type="text" class="vng-soc-modal-search-inp" id="vng-soc-following-search" placeholder="SEARCH FOLLOWING..." oninput="vngSocFilterList('following',this.value)" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="vng-soc-user-list" id="vng-soc-following-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     VNG SOCIAL SYSTEM v3.0
+     Notifications · Followers · Following
+     ─ Pure vanilla JS
+     ─ Firebase per-user Firestore notifications (real-time)
+     ─ Firebase Firestore followers/following (real data only)
+     ─ Notification panel lives INSIDE user profile dashboard only
+     ─ No page reloads · No dependencies
+     ─ Each user's data is completely isolated by UID
+     ─ NO fake / demo data anywhere
+═══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ════════════════════════════════════════════
+   INTERNAL STATE — ALL SCOPED TO LOGGED-IN USER
+   All arrays are always loaded from Firebase.
+   No hardcoded, demo, or fake data.
+════════════════════════════════════════════ */
+var _notifData        = [];   // per-user from Firebase
+var _followersData    = [];   // real followers from Firestore
+var _followingData    = [];   // real following from Firestore
+var _followingUidSet  = {};   // fast lookup: uid → true if current user follows them
+var _currentUserUid   = null; // UID of the logged-in user
+var _profNotifOpen    = false;
+var _notifFilter      = 'all';
+var _notifUnsubscribe = null;
+var _currentNotifUid  = null;
+
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function _avatarHtml(user){
+  if(user.photoURL){
+    return '<div class="vng-soc-user-av"><img src="'+esc(user.photoURL)+'" alt="av"></div>';
+  }
+  var letter = (user.username||'?')[0].toUpperCase();
+  return '<div class="vng-soc-user-av">'+esc(letter)+'</div>';
+}
+
+/* ════════════════════════════════════════════
+   ICON MAP — map notification type → emoji
+════════════════════════════════════════════ */
+var _TYPE_ICO = { follow:'👤', message:'✉️', visit:'👁', update:'📢' };
+function _typeIco(t){ return _TYPE_ICO[t] || '🔔'; }
+
+/* ════════════════════════════════════════════
+   RELATIVE TIME HELPER
+════════════════════════════════════════════ */
+function _relTime(ts){
+  if(!ts) return '';
+  var d;
+  if(ts && ts.toDate) d = ts.toDate();
+  else if(ts && ts.seconds) d = new Date(ts.seconds * 1000);
+  else d = new Date(ts);
+  var diff = Math.floor((Date.now() - d.getTime()) / 1000);
+  if(diff < 60)  return diff + 's ago';
+  if(diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if(diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+/* ════════════════════════════════════════════
+   BADGE UPDATE — in-profile bell only
+════════════════════════════════════════════ */
+function _updateProfBadge(){
+  var badge = document.getElementById('vng-prof-notif-badge');
+  if(!badge) return;
+  var unread = _notifData.filter(function(n){ return !n.read; }).length;
+  if(unread > 0){
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    badge.classList.add('show');
+  } else {
+    badge.textContent = '';
+    badge.classList.remove('show');
+  }
+}
+
+/* ════════════════════════════════════════════
+   FIREBASE — PER-USER NOTIFICATIONS
+   Real-time listener: loads only the logged-in
+   user's notifications from their subcollection.
+   Never touches another user's data.
+════════════════════════════════════════════ */
+
+/**
+ * Start real-time listener for the given user's notifications.
+ * Unsubscribes any previous listener first.
+ * Firestore path: users/{uid}/notifications
+ * Types supported: follow, message, visit, update
+ */
+function _startNotifListener(uid){
+  /* Unsubscribe previous listener if switching users */
+  if(_notifUnsubscribe){
+    try { _notifUnsubscribe(); } catch(e){}
+    _notifUnsubscribe = null;
+  }
+  _currentNotifUid = uid;
+  _notifData = []; /* clear stale data from any previous user */
+  _updateProfBadge();
+
+  if(!uid || typeof fbDb === 'undefined' || !fbDb){
+    /* Firebase not available — silent; no demo data shown for security */
+    _updateProfBadge();
+    if(_profNotifOpen) _renderProfNotifList();
+    return;
+  }
+
+  try {
+    var query = fbDb.collection('users').doc(uid)
+      .collection('notifications')
+      .orderBy('createdAt', 'desc')
+      .limit(50);
+
+    _notifUnsubscribe = query.onSnapshot(
+      function(snap){
+        _notifData = snap.docs.map(function(doc){
+          var d = doc.data();
+          return {
+            id:      doc.id,
+            type:    d.type    || 'update',
+            read:    !!d.read,
+            ico:     _typeIco(d.type),
+            txt:     d.text   || d.txt || '',
+            time:    _relTime(d.createdAt),
+            rawTime: d.createdAt
+          };
+        });
+        _updateProfBadge();
+        if(_profNotifOpen) _renderProfNotifList();
+      },
+      function(err){
+        console.warn('[VNG Notif] Listener error:', err.message);
+      }
+    );
+  } catch(e){
+    console.warn('[VNG Notif] Could not start listener:', e.message);
+  }
+}
+
+/**
+ * Stop notifications listener and clear data.
+ * Called on logout to ensure zero cross-user leakage.
+ */
+function _stopNotifListener(){
+  if(_notifUnsubscribe){
+    try { _notifUnsubscribe(); } catch(e){}
+    _notifUnsubscribe = null;
+  }
+  _currentNotifUid = null;
+  _notifData = [];
+  _updateProfBadge();
+  _renderProfNotifList();
+}
+
+/* ════════════════════════════════════════════
+   IN-PROFILE NOTIFICATION PANEL
+════════════════════════════════════════════ */
+function _renderProfNotifList(){
+  var list = document.getElementById('vng-prof-notif-list');
+  if(!list) return;
+
+  /* Apply filter */
+  var filtered = _notifFilter === 'all'
+    ? _notifData
+    : _notifData.filter(function(n){ return n.type === _notifFilter; });
+
+  if(filtered.length === 0){
+    var emptyMsg = _notifFilter === 'all'
+      ? '// NO NOTIFICATIONS YET'
+      : '// NO ' + _notifFilter.toUpperCase() + ' NOTIFICATIONS';
+    list.innerHTML = '<div class="vng-soc-notif-empty">'+esc(emptyMsg)+'</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(n){
+    html += '<div class="vng-soc-notif-row'+(n.read?'':' unread')+'" data-id="'+esc(n.id)+'" onclick="vngProfMarkRead(\''+esc(n.id)+'\')">'+
+      '<div class="vng-soc-notif-ico">'+n.ico+'</div>'+
+      '<div class="vng-soc-notif-body">'+
+        '<div class="vng-soc-notif-txt">'+n.txt+'</div>'+
+        '<div class="vng-soc-notif-time">'+esc(n.time)+'</div>'+
+      '</div>'+
+      '<div class="vng-soc-notif-dot"></div>'+
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
+/* Toggle in-profile notification panel */
+window.vngProfToggleNotif = function(e){
+  if(e) e.stopPropagation();
+  var panel = document.getElementById('vng-prof-notif-panel');
+  var pill  = document.getElementById('vng-prof-notif-pill');
+  if(!panel) return;
+  _profNotifOpen = !panel.classList.contains('open');
+  panel.classList.toggle('open', _profNotifOpen);
+  if(pill) pill.classList.toggle('vng-soc-active', _profNotifOpen);
+  if(_profNotifOpen) _renderProfNotifList();
+};
+
+/* Mark single notification read */
+window.vngProfMarkRead = function(id){
+  var n = _notifData.find(function(x){ return x.id===id; });
+  if(n && !n.read){
+    n.read = true;
+    /* Firestore: update this user's notification doc */
+    if(_currentNotifUid && typeof fbDb !== 'undefined' && fbDb){
+      try {
+        fbDb.collection('users').doc(_currentNotifUid)
+          .collection('notifications').doc(id)
+          .update({ read: true })
+          .catch(function(e){ console.warn('[VNG Notif] markRead:', e.message); });
+      } catch(e){}
+    }
+    _renderProfNotifList();
+    _updateProfBadge();
+  }
+};
+
+/* Mark all notifications read for current user */
+window.vngProfMarkAllRead = function(){
+  var unread = _notifData.filter(function(n){ return !n.read; });
+  unread.forEach(function(n){ n.read = true; });
+  /* Firestore: batch update */
+  if(_currentNotifUid && typeof fbDb !== 'undefined' && fbDb && unread.length > 0){
+    try {
+      var batch = fbDb.batch();
+      unread.forEach(function(n){
+        var ref = fbDb.collection('users').doc(_currentNotifUid)
+          .collection('notifications').doc(n.id);
+        batch.update(ref, { read: true });
+      });
+      batch.commit().catch(function(e){ console.warn('[VNG Notif] markAll:', e.message); });
+    } catch(e){}
+  }
+  _renderProfNotifList();
+  _updateProfBadge();
+};
+
+/* Filter tab switch */
+window.vngProfSetFilter = function(btn, filter){
+  _notifFilter = filter;
+  /* Update tab active state */
+  var tabs = document.querySelectorAll('.vng-prof-notif-tab');
+  tabs.forEach(function(t){ t.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  _renderProfNotifList();
+};
+
+/* Close panel on outside click */
+document.addEventListener('click', function(e){
+  var pill  = document.getElementById('vng-prof-notif-pill');
+  var panel = document.getElementById('vng-prof-notif-panel');
+  if(_profNotifOpen && panel && pill){
+    /* Panel is anchored below pill; check if click is outside both */
+    var row = pill.closest ? pill.closest('.vng-soc-stat-row') : null;
+    if(row && !row.contains(e.target)){
+      panel.classList.remove('open');
+      pill.classList.remove('vng-soc-active');
+      _profNotifOpen = false;
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   PUBLIC HOOK: called by Firebase auth change
+   vngSocInitNotifications(uid)  — login
+   vngSocClearNotifications()    — logout
+════════════════════════════════════════════ */
+window.vngSocInitNotifications = function(uid){
+  if(!uid) return;
+  _startNotifListener(uid);
+};
+
+window.vngSocClearNotifications = function(){
+  _stopNotifListener();
+  /* Close panel if open */
+  var panel = document.getElementById('vng-prof-notif-panel');
+  var pill  = document.getElementById('vng-prof-notif-pill');
+  if(panel){ panel.classList.remove('open'); }
+  if(pill) { pill.classList.remove('vng-soc-active'); }
+  _profNotifOpen = false;
+  _notifFilter   = 'all';
+};
+
+/* ════════════════════════════════════════════
+   FOLLOWER / FOLLOWING COUNT DISPLAY
+   Reads from in-memory arrays (populated from
+   Firebase). Updates the pills in the dashboard.
+════════════════════════════════════════════ */
+function vngSocUpdateCounts(){
+  var fc = document.getElementById('vng-soc-followers-count');
+  var gc = document.getElementById('vng-soc-following-count');
+  if(fc) fc.textContent = _followersData.length;
+  if(gc) gc.textContent = _followingData.length;
+}
+window.vngSocUpdateCounts = vngSocUpdateCounts;
+
+/* ════════════════════════════════════════════
+   FIREBASE — LOAD FOLLOWERS / FOLLOWING
+   Fetches the current user's real follower and
+   following lists from Firestore subcollections.
+   Never loads another user's data.
+
+   Firestore schema used:
+     users/{uid}/followers/{followerUid}  → { uid, joinedAt }
+     users/{uid}/following/{followingUid} → { uid, joinedAt }
+     users/{uid}                          → { username, bio, photoURL, … }
+════════════════════════════════════════════ */
+async function _loadFollowersFromFirebase(uid){
+  if(!uid || typeof fbDb === 'undefined' || !fbDb) return;
+  try {
+    var snap = await fbDb.collection('users').doc(uid).collection('followers').get();
+    if(snap.empty){ _followersData = []; vngSocUpdateCounts(); return; }
+    /* Resolve each follower UID to their profile */
+    var uids = snap.docs.map(function(d){ return d.id; });
+    var profileSnaps = await Promise.all(
+      uids.map(function(u){ return fbDb.collection('users').doc(u).get(); })
+    );
+    _followersData = profileSnaps
+      .filter(function(s){ return s.exists; })
+      .map(function(s){
+        var d = s.data();
+        return {
+          uid:       s.id,
+          username:  d.username  || '?',
+          bio:       d.bio       || '',
+          photoURL:  d.photoURL  || ''
+        };
+      });
+    vngSocUpdateCounts();
+  } catch(e){
+    console.warn('[VNG Social] loadFollowers error:', e.message);
+    _followersData = [];
+    vngSocUpdateCounts();
+  }
+}
+
+async function _loadFollowingFromFirebase(uid){
+  if(!uid || typeof fbDb === 'undefined' || !fbDb) return;
+  try {
+    var snap = await fbDb.collection('users').doc(uid).collection('following').get();
+    if(snap.empty){ _followingData = []; _followingUidSet = {}; vngSocUpdateCounts(); return; }
+    var uids = snap.docs.map(function(d){ return d.id; });
+    var profileSnaps = await Promise.all(
+      uids.map(function(u){ return fbDb.collection('users').doc(u).get(); })
+    );
+    _followingData = profileSnaps
+      .filter(function(s){ return s.exists; })
+      .map(function(s){
+        var d = s.data();
+        return {
+          uid:       s.id,
+          username:  d.username  || '?',
+          bio:       d.bio       || '',
+          photoURL:  d.photoURL  || ''
+        };
+      });
+    /* Rebuild fast-lookup set */
+    _followingUidSet = {};
+    _followingData.forEach(function(u){ _followingUidSet[u.uid] = true; });
+    vngSocUpdateCounts();
+  } catch(e){
+    console.warn('[VNG Social] loadFollowing error:', e.message);
+    _followingData = []; _followingUidSet = {};
+    vngSocUpdateCounts();
+  }
+}
+
+/* Load both lists for the logged-in user */
+async function _loadAllSocialData(uid){
+  _currentUserUid = uid;
+  _followersData = [];
+  _followingData = [];
+  _followingUidSet = {};
+  vngSocUpdateCounts();
+  await Promise.all([
+    _loadFollowersFromFirebase(uid),
+    _loadFollowingFromFirebase(uid)
+  ]);
+}
+
+/* Clear all social data on logout */
+function _clearSocialData(){
+  _currentUserUid  = null;
+  _followersData   = [];
+  _followingData   = [];
+  _followingUidSet = {};
+  vngSocUpdateCounts();
+}
+
+/* ════════════════════════════════════════════
+   FOLLOWERS / FOLLOWING MODALS
+   Renders only real data loaded from Firebase.
+   Shows Follow / Unfollow button for others.
+   Hides Follow button for own UID (self).
+════════════════════════════════════════════ */
+function _avatarHtml(user){
+  if(user.photoURL){
+    return '<div class="vng-soc-user-av"><img src="'+esc(user.photoURL)+'" alt="av"></div>';
+  }
+  var letter = (user.username||'?')[0].toUpperCase();
+  return '<div class="vng-soc-user-av">'+esc(letter)+'</div>';
+}
+
+function _renderUserList(type, filter){
+  var listEl = document.getElementById('vng-soc-'+type+'-list');
+  if(!listEl) return;
+  var data = type === 'followers' ? _followersData : _followingData;
+  var q = (filter||'').toLowerCase().trim();
+  var filtered = q
+    ? data.filter(function(u){
+        return (u.username||'').toLowerCase().includes(q) ||
+               (u.bio||'').toLowerCase().includes(q);
+      })
+    : data.slice();
+
+  if(filtered.length === 0){
+    var emptyTxt = q ? '// NO RESULTS FOR "'+esc(q)+'"' : '// NONE YET';
+    listEl.innerHTML = '<div class="vng-soc-list-empty">'+emptyTxt+'</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(u){
+    var isSelf      = (_currentUserUid && u.uid === _currentUserUid);
+    var isFollowing = !!_followingUidSet[u.uid];
+
+    var followBtn = '';
+    if(!isSelf){
+      followBtn = '<button class="vng-soc-follow-btn'+(isFollowing?' following':'')+'" '+
+        'data-uid="'+esc(u.uid)+'" '+
+        'onclick="vngSocToggleFollow(\''+esc(u.uid)+'\',\''+type+'\',this)">'+
+        (isFollowing ? 'FOLLOWING' : 'FOLLOW')+
+      '</button>';
+    }
+
+    html += '<div class="vng-soc-user-card">'+
+      _avatarHtml(u)+
+      '<div class="vng-soc-user-info">'+
+        '<div class="vng-soc-user-name">'+esc(u.username)+'</div>'+
+        '<div class="vng-soc-user-bio">'+(u.bio ? esc(u.bio) : '// VNG MEMBER')+'</div>'+
+      '</div>'+
+      '<div class="vng-soc-user-actions">'+
+        followBtn+
+        '<button class="vng-soc-view-btn" onclick="vngSocViewProfile(\''+esc(u.uid)+'\',\''+type+'\')">VIEW</button>'+
+      '</div>'+
+    '</div>';
+  });
+  listEl.innerHTML = html;
+}
+
+window.vngSocOpenModal = function(type){
+  var modal = document.getElementById('vng-soc-'+type+'-modal');
+  if(!modal) return;
+  modal.classList.add('open');
+  var inp = document.getElementById('vng-soc-'+type+'-search');
+  if(inp) inp.value = '';
+  /* If Firebase is available, reload fresh data then render */
+  if(_currentUserUid && typeof fbDb !== 'undefined' && fbDb){
+    if(type === 'followers'){
+      _loadFollowersFromFirebase(_currentUserUid).then(function(){
+        _renderUserList(type, '');
+      });
+    } else {
+      _loadFollowingFromFirebase(_currentUserUid).then(function(){
+        _renderUserList(type, '');
+      });
+    }
+  } else {
+    _renderUserList(type, '');
+  }
+};
+
+window.vngSocCloseModal = function(type){
+  var modal = document.getElementById('vng-soc-'+type+'-modal');
+  if(modal) modal.classList.remove('open');
+};
+
+window.vngSocFilterList = function(type, val){
+  _renderUserList(type, val);
+};
+
+/* ════════════════════════════════════════════
+   FOLLOW / UNFOLLOW
+   Writes to Firestore:
+     users/{myUid}/following/{targetUid}
+     users/{targetUid}/followers/{myUid}
+   Uses FieldValue.increment to keep counts.
+   Updates in-memory state optimistically.
+════════════════════════════════════════════ */
+window.vngSocToggleFollow = function(targetUid, listType, btn){
+  if(!targetUid || !_currentUserUid) return;
+  /* Prevent following yourself (safety guard) */
+  if(targetUid === _currentUserUid) return;
+
+  var isFollowing = !!_followingUidSet[targetUid];
+
+  if(typeof fbDb === 'undefined' || !fbDb){
+    console.warn('[VNG Social] Firebase not ready');
+    return;
+  }
+
+  var myUid        = _currentUserUid;
+  var followingRef = fbDb.collection('users').doc(myUid)
+                       .collection('following').doc(targetUid);
+  var followerRef  = fbDb.collection('users').doc(targetUid)
+                       .collection('followers').doc(myUid);
+  var FV           = firebase.firestore.FieldValue;
+
+  /* Optimistic UI update */
+  if(isFollowing){
+    /* Unfollow */
+    _followingUidSet[targetUid] = false;
+    delete _followingUidSet[targetUid];
+    _followingData = _followingData.filter(function(u){ return u.uid !== targetUid; });
+    if(btn){ btn.textContent = 'FOLLOW'; btn.classList.remove('following'); }
+  } else {
+    /* Follow */
+    _followingUidSet[targetUid] = true;
+    /* Add to following list if not already there */
+    if(!_followingData.find(function(u){ return u.uid === targetUid; })){
+      /* Find the user in followers list to get their profile */
+      var prof = _followersData.find(function(u){ return u.uid === targetUid; });
+      if(prof) _followingData.push(prof);
+    }
+    if(btn){ btn.textContent = 'FOLLOWING'; btn.classList.add('following'); }
+  }
+  vngSocUpdateCounts();
+
+  /* Write to Firestore */
+  var batch = fbDb.batch();
+  if(isFollowing){
+    batch.delete(followingRef);
+    batch.delete(followerRef);
+    batch.update(fbDb.collection('users').doc(myUid),
+      { followingCount: FV.increment(-1) });
+    batch.update(fbDb.collection('users').doc(targetUid),
+      { followersCount: FV.increment(-1) });
+  } else {
+    var now = FV.serverTimestamp();
+    batch.set(followingRef, { uid: targetUid, joinedAt: now });
+    batch.set(followerRef,  { uid: myUid,     joinedAt: now });
+    batch.update(fbDb.collection('users').doc(myUid),
+      { followingCount: FV.increment(1) });
+    batch.update(fbDb.collection('users').doc(targetUid),
+      { followersCount: FV.increment(1) });
+  }
+  batch.commit().catch(function(e){
+    console.warn('[VNG Social] toggleFollow error:', e.message);
+    /* Revert optimistic update on failure */
+    if(isFollowing){
+      _followingUidSet[targetUid] = true;
+    } else {
+      delete _followingUidSet[targetUid];
+      _followingData = _followingData.filter(function(u){ return u.uid !== targetUid; });
+    }
+    if(btn){
+      btn.textContent = isFollowing ? 'FOLLOWING' : 'FOLLOW';
+      btn.classList.toggle('following', isFollowing);
+    }
+    vngSocUpdateCounts();
+  });
+};
+
+window.vngSocViewProfile = function(uid, listType){
+  /* Close modals first */
+  vngSocCloseModal('followers');
+  vngSocCloseModal('following');
+  /* Open profile modal for this user — uses vngOpenUserProfile from search system */
+  if(typeof vngOpenUserProfile === 'function' && uid){
+    vngOpenUserProfile(uid);
+  }
+};
+
+/* ════════════════════════════════════════════
+   FOLLOW BUTTON IN USER PROFILE MODAL
+   Called when user clicks Follow/Unfollow inside
+   the vng-profile-modal (opened via search or
+   followers/following lists).
+════════════════════════════════════════════ */
+window.vngPcToggleFollow = function(){
+  var modal = document.getElementById('vng-profile-modal');
+  var btn   = document.getElementById('vng-pc-follow-btn');
+  if(!modal || !btn) return;
+  var targetUid = modal.dataset.viewedUid;
+  if(!targetUid || targetUid === _currentUserUid) return;
+
+  var isFollowing = !!_followingUidSet[targetUid];
+  /* Optimistic UI update on the modal button */
+  if(isFollowing){
+    btn.textContent = 'FOLLOW';
+    btn.style.borderColor = 'rgba(191,0,255,.35)';
+    btn.style.color = 'var(--purple)';
+  } else {
+    btn.textContent = 'UNFOLLOW';
+    btn.style.borderColor = 'rgba(0,245,255,.25)';
+    btn.style.color = 'var(--cyan)';
+  }
+  /* Delegate to the main toggle which handles Firestore + in-memory update */
+  window.vngSocToggleFollow(targetUid, 'modal', null);
+};
+
+/* ════════════════════════════════════════════
+   HELPERS EXPOSED TO SEARCH SYSTEM
+   These are read by vngOpenUserProfile to decide
+   whether to show/hide the Follow button.
+════════════════════════════════════════════ */
+
+/* Returns true if the logged-in user is following targetUid */
+window._vngSocIsFollowing = function(targetUid){
+  return !!_followingUidSet[targetUid];
+};
+
+/* Keep window._vngSocCurrentUid in sync so search system can read it */
+function _syncCurrentUid(uid){
+  _currentUserUid = uid;
+  window._vngSocCurrentUid = uid || null;
+}
+
+/* ════════════════════════════════════════════
+   PUBLIC HOOKS — called by auth bridge below
+════════════════════════════════════════════ */
+
+/**
+ * Called on login: starts notification listener
+ * AND loads followers/following from Firestore.
+ */
+window.vngSocInitNotifications = function(uid){
+  if(!uid) return;
+  _startNotifListener(uid);
+};
+
+/**
+ * Called on login: loads followers/following.
+ * Kept separate from notifications so each can
+ * fail independently without breaking the other.
+ */
+window.vngSocInitSocial = function(uid){
+  if(!uid) return;
+  _syncCurrentUid(uid);
+  _loadAllSocialData(uid);
+};
+
+/**
+ * Called on logout: clears ALL per-user data.
+ * Notifications, followers, following — all wiped.
+ */
+window.vngSocClearAll = function(){
+  _syncCurrentUid(null);
+  _stopNotifListener();
+  _clearSocialData();
+  /* Close any open panels */
+  var panel = document.getElementById('vng-prof-notif-panel');
+  var pill  = document.getElementById('vng-prof-notif-pill');
+  if(panel){ panel.classList.remove('open'); }
+  if(pill) { pill.classList.remove('vng-soc-active'); }
+  _profNotifOpen = false;
+  _notifFilter   = 'all';
+  /* Close follower/following modals */
+  ['followers','following'].forEach(function(t){
+    var m = document.getElementById('vng-soc-'+t+'-modal');
+    if(m) m.classList.remove('open');
+  });
+};
+
+/* Legacy aliases (used by auth bridge script below) */
+window.vngSocClearNotifications = window.vngSocClearAll;
+
+/* ════════════════════════════════════════════
+   FIREBASE STUB DOCS (for reference)
+════════════════════════════════════════════ */
+/*
+  Firestore schema:
+    users/{uid}                          { username, bio, photoURL, followersCount, followingCount, … }
+    users/{uid}/followers/{followerUid}  { uid, joinedAt }
+    users/{uid}/following/{followingUid} { uid, joinedAt }
+    users/{uid}/notifications/{id}       { type, text, read, createdAt }
+*/
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+_updateProfBadge();
+vngSocUpdateCounts();
+
+})();
+</script>
+<script>
+/* ════════════════════════════════════════════
+   ESC KEY — close any open social modal / panel
+════════════════════════════════════════════ */
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  ['followers','following'].forEach(function(t){
+    var m = document.getElementById('vng-soc-'+t+'-modal');
+    if(m && m.classList.contains('open')){ m.classList.remove('open'); }
+  });
+  /* Close in-profile notification panel */
+  (function(){
+    var panel = document.getElementById('vng-prof-notif-panel');
+    var pill  = document.getElementById('vng-prof-notif-pill');
+    if(panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if(pill) pill.classList.remove('vng-soc-active');
+    }
+  })();
+}, true);
+
+/* ════════════════════════════════════════════
+   CURSOR HOVER EXPANSION — extend existing
+   cursor grow effect to new social buttons
+════════════════════════════════════════════ */
+(function _socCursorHook(){
+  var cur = document.getElementById('cur');
+  if(!cur) return;
+  var socEls = document.querySelectorAll(
+    '.vng-prof-notif-pill,.vng-soc-follow-btn,.vng-soc-view-btn,.vng-soc-modal-close,.vng-soc-stat-pill,.vng-soc-notif-row,.vng-soc-mark-all,.vng-soc-panel-footer-btn,.vng-prof-notif-tab'
+  );
+  socEls.forEach(function(el){
+    el.addEventListener('mouseenter', function(){
+      cur.style.width='34px'; cur.style.height='34px';
+      cur.style.borderColor='rgba(191,0,255,.8)';
+    },{passive:true});
+    el.addEventListener('mouseleave', function(){
+      cur.style.width='22px'; cur.style.height='22px';
+      cur.style.borderColor='var(--cyan)';
+    },{passive:true});
+  });
+  /* Re-apply cursor effects to dynamically rendered user cards */
+  var _origOpen = window.vngSocOpenModal;
+  window.vngSocOpenModal = function(type){
+    _origOpen(type);
+    setTimeout(function(){
+      document.querySelectorAll('.vng-soc-user-card').forEach(function(el){
+        el.addEventListener('mouseenter', function(){
+          cur.style.width='34px'; cur.style.height='34px';
+          cur.style.borderColor='rgba(191,0,255,.8)';
+        },{passive:true});
+        el.addEventListener('mouseleave', function(){
+          cur.style.width='22px'; cur.style.height='22px';
+          cur.style.borderColor='var(--cyan)';
+        },{passive:true});
+      });
+    }, 50);
+  };
+})();
+</script>
+
+<!-- ════════════════════════════════════════════
+     VNG SOCIAL AUTH BRIDGE v3.0
+     Hooks into Firebase auth state to:
+       • Start/stop per-user notification listener
+       • Load/clear per-user followers & following
+     Must run AFTER all script blocks above.
+     Uses vngSocInitNotifications + vngSocInitSocial
+     on login; vngSocClearAll on logout.
+════════════════════════════════════════════ -->
+<script>
+(function(){
+  function _hookAuthState(){
+    if(typeof fbAuth === 'undefined' || !fbAuth){
+      setTimeout(_hookAuthState, 200);
+      return;
+    }
+    fbAuth.onAuthStateChanged(function(user){
+      if(user){
+        /* Notifications listener */
+        if(typeof vngSocInitNotifications === 'function'){
+          vngSocInitNotifications(user.uid);
+        }
+        /* Followers / Following from Firebase */
+        if(typeof vngSocInitSocial === 'function'){
+          vngSocInitSocial(user.uid);
+        }
+      } else {
+        /* Logout — wipe all per-user data */
+        if(typeof vngSocClearAll === 'function'){
+          vngSocClearAll();
+        }
+      }
+    });
+  }
+  _hookAuthState();
+})();
+</script>
+
 </body>
 </html>
